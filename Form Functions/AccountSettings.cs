@@ -141,8 +141,20 @@ namespace Form_Functions
                     using var wc = new WebClient();
                     var imagePath = @".\Resources\UserProfileImages\" + UserName +
                                     Path.GetExtension(imageUri.AbsolutePath);
-                    if (!File.Exists(imagePath))
+                    var dir = new DirectoryInfo(@".\Resources\UserProfileImages\");
+                    FileInfo[] files = dir.GetFiles(UserName + ".*");
+                    if (files.Length > 0)
+                    {
+                        //File exists
+                        foreach (FileInfo file in files)
+                        {
+                            File.Delete(file.FullName);
+                        }
+                    }
+                    else
+                    {
                         File.Create(imagePath);
+                    }
                     wc.DownloadFile(imageUri, imagePath);
                     UserPicutreBox.BackgroundImage = Image.FromFile(imagePath);
                 }
