@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Net.Sockets;
 using System.Windows.Forms;
 #nullable enable
+// test merge.
 namespace Chat_Together
 {
     public class Client
