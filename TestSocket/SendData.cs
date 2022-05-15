@@ -45,21 +45,12 @@ namespace Chat_Together
         
         #endregion
 
-        public static Color GetRandomColor()
-        {
-            var r = new Random();
-            return Color.FromArgb(r.Next(255),
-                                  r.Next(255),
-                                  r.Next(255));
-        }
-
 
         #region Constructor
 
         private volatile Thread _loadingRunner;
         public SendData(Dependency d)
         {
-           
             _loadingRunner = new Thread(Start);
             _loadingRunner.Name = "Loading Runner";
             _loadingRunner.TrySetApartmentState(ApartmentState.STA);
@@ -68,20 +59,6 @@ namespace Chat_Together
             InitializeComponent();
             Enabled = false;
             var r = new Random();
-            //for (int i = 0; i < 30; i++)
-            //{
-            //    ListViewItem it = new ()
-            //    { Text = Guid.NewGuid().ToString(), 
-            //    ForeColor = Color.FromArgb(r.Next(255),
-            //                               r.Next(255),
-            //                               r.Next(255)),
-            //      BackColor = Color.FromArgb(r.Next(255),
-            //                                 r.Next(255),
-            //                                 r.Next(255)),
-            //      ImageIndex = new Random().Next(userIcons.Images.Count), Font = new Font(FontFamily.GenericSerif,
-            //       new Random().Next(5) + 10, FontStyle.Bold, GraphicsUnit.Pixel) };
-            //    logList.Items.Add(it);
-            //}
 
             var s = File.ReadAllText("..\\Port.txt", Default);
             do
@@ -166,7 +143,7 @@ namespace Chat_Together
         }
 
         private Thread? _t;
-        private Thread _logInThread;
+
         private void GetDataFromServer()
         {
             try { _rec = _tcpListener.AcceptTcpClient(); }

@@ -144,6 +144,7 @@ namespace Chat_Together
         {
             InitializeComponent();
             cte = new ();
+            
             _l = new Listener(9);
             tcpClients = new Dictionary<string, TcpClient>();
             Timer t = new(2200);
@@ -319,7 +320,7 @@ namespace Chat_Together
         }
         private void Chat_Together_FormClosing(object sender, FormClosingEventArgs e)
         {
-            File.WriteAllText("C:\\Users\\yisha\\source\\repos\\ChatTogether\\TestSocket\\Port.txt", "");
+            File.WriteAllText("..\\Port.txt", "");
         }
         private void button1_Click(object sender, EventArgs e)
         {
