@@ -39,3 +39,24 @@ C:\Users\racheli\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Cha
 C:\Users\racheli\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.csproj.CopyComplete
 C:\Users\racheli\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.exe
 C:\Users\racheli\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.pdb
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\Chat Together.exe.config
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\Chat Together.exe
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\Chat Together.pdb
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\EntityFramework.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\Form Functions.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\TestSocket.exe
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\Form Functions.pdb
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\TestSocket.pdb
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\TestSocket.exe.config
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\EntityFramework.xml
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.csproj.AssemblyReference.cache
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.csproj.SuggestedBindingRedirects.cache
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat_Together.ChatTogether.resources
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat_Together.Properties.Resources.resources
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.csproj.GenerateResource.cache
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.csproj.CoreCompileInputs.cache
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.csproj.CopyComplete
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.exe
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\Chat Together\obj\Debug\Chat Together.pdb

@@ -45,3 +45,27 @@ C:\Users\racheli\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSo
 C:\Users\racheli\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.csproj.CopyComplete
 C:\Users\racheli\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.exe
 C:\Users\racheli\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.pdb
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\TestSocket.exe.config
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\TestSocket.exe
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\TestSocket.pdb
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\EntityFramework.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\Form Functions.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\Form Functions.pdb
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\EntityFramework.xml
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\Interop.WMPLib.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\bin\Debug\AxInterop.WMPLib.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.csproj.AssemblyReference.cache
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.csproj.SuggestedBindingRedirects.cache
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\Interop.WMPLib.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.csproj.ResolveComReference.cache
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.LoadingWindow.resources
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.Properties.Resources.resources
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\Chat_Together.SendData.resources
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.csproj.GenerateResource.cache
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.csproj.CoreCompileInputs.cache
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.csproj.CopyComplete
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.exe
+C:\Users\yisha\Source\Repos\pallemry\Chat_Together\TestSocket\obj\Debug\TestSocket.pdb

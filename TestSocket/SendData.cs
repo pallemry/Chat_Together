@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Sockets;
@@ -97,7 +99,7 @@ namespace Chat_Together
                 MessageBox.Show("Data could not be sent!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            textBox1.Text = string.Empty;
+            textBox1.Text = @"";
         }
         
         
@@ -321,13 +323,7 @@ namespace Chat_Together
             if (bb.StartsWith("show"))
                 chatLog1.AddMessage(bb, "System", Resources.download_removebg_preview, _defaultMessageWidth);
         }
-         
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.Enter) return;
-            sendButton_Click(sender, e);
-            textBox1.Text = @"";
-        }
+
 
         #region Close Client
         private void SendData_FormClosing(object sender, FormClosingEventArgs e) => EndOperation(CloseReason.UserClosing);
@@ -397,13 +393,9 @@ namespace Chat_Together
 
         private void textBox1_KeyDown_1(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Enter) return;
-            if (e.Shift)
-                textBox1.Text += "\n";
-            else
-                sendButton_Click(sender, e);
-
-
+            if (e.KeyCode != Keys.Enter || e.Shift) return;
+            sendButton_Click(sender, e);
+            e.Handled = true;
         }
     }
 }
