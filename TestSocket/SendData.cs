@@ -262,7 +262,7 @@ namespace Chat_Together
                     var smtpClient = new SmtpClient("smtp.gmail.com")
                     {
                     Port = 587,
-                    Credentials = new NetworkCredential("t.mail.spam.t@gmail.com", "1I6T4jcG5M7k"),
+                    Credentials = new NetworkCredential("t.mail.spam.t@gmail.com", "BF8mLp43QwSD"),
                     EnableSsl = true,
                     };
                     var input_code = new Input_box("Enter Code given in email",
