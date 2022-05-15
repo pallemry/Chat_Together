@@ -1,0 +1,3 @@
+metadata=res://*/UsersDb.csdl|res://*/UsersDb.ssdl|res://*/UsersDb.msl;provider=System.
+Data.SqlClient;provider connection string="data source=.\sqlexpress;initial catalog=Store;
+integrated security=True;MultipleActiveResultSets=True;App=EntityFramework"
