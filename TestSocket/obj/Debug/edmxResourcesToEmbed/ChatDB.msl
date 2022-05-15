@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="ChatTogtherModelStoreContainer" CdmEntityContainer="ChatTogtherEntities">
+    <EntitySetMapping Name="Message_Records">
+      <EntityTypeMapping TypeName="ChatTogtherModel.Message_Record">
+        <MappingFragment StoreEntitySet="Message Record">
+          <ScalarProperty Name="MessageRec" ColumnName="MessageRec" />
+          <ScalarProperty Name="Message" ColumnName="Message" />
+          <ScalarProperty Name="dateOccured" ColumnName="dateOccured" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="ChatTogtherModel.User">
+        <MappingFragment StoreEntitySet="User">
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

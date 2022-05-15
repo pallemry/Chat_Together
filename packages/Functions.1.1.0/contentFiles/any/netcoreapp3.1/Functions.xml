@@ -1,0 +1,432 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Functions</name>
+    </assembly>
+    <members>
+        <member name="T:Functions.AdvancedConsole.AdvancedConsolePrinter">
+            <summary>
+            This class contains can help with easier advanced printing <see cref="F:System.Int32.MaxValue">MAX</see>
+            Note that here you can also use 
+            <see href="https://docs.microsoft.com/dotnet/api/system.int32.maxvalue"/>
+            </summary>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedConsolePrinter.Print(System.String,Functions.AdvancedConsole.AdvancedConsolePrinter.PrintType,System.Boolean)">
+            <!-- Failed to insert some or all of included XML --><include file="C:\Users\yisha\Downloads\Store Solution\Functions\Functions.xml" path="MyDocs//MyMembers[@name=&quot;test&quot;]" />
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedConsolePrinter.PrintBasicFormat(System.String,System.Boolean,System.ConsoleColor,System.Boolean)">
+            <summary>
+                <para>
+                    Used To print with special cases
+                </para>
+                <para>
+                    <code></code>
+                    <example>
+                        For Example: 
+                        <code>
+                            <paramref name="s"/> = `2`
+                        </code>
+                        This will result in "s" being sent as a message box.
+                    </example>
+                </para>
+            </summary>
+            <remarks>
+                <para>
+                    The following <c>Syntax</c> to the method is as following:
+                    <list type="bullet">
+                        <item>
+                            <term><c>!<paramref name="s"/>!</c></term>
+                            <desc>Prints <paramref name="s"/> as an error with the specified <see cref="P:Functions.AdvancedConsole.AdvancedConsolePrinter.DefaultErrorColor"/></desc>
+                        </item>
+                        <item>
+                            <term><c>#<paramref name="s"/>#</c></term>
+                            <desc>Prints <paramref name="s"/> as completed with the specified <see cref="P:Functions.AdvancedConsole.AdvancedConsolePrinter.DefaultCompletedColor"/></desc>
+                        </item>
+                        <item>
+                            <term><c>~<paramref name="s"/>~</c></term>
+                            <desc>Prints <paramref name="s"/> as mention with the specified <see cref="P:Functions.AdvancedConsole.AdvancedConsolePrinter.DefaultHighlightColor"/></desc>
+                        </item>
+                        <item>
+                            <term><c>!<paramref name="s"/>!</c></term>
+                            <desc>Normal Message box containing <paramref name="s"/></desc>
+                        </item>
+                        <item>
+                            <term><c>`MSE..<paramref name="s"/>..MSE`</c></term>
+                            <desc>
+                                MSE at the start and end means Message Box
+                                <br></br>Error and you can use it to display normal errors
+                            </desc>
+                        </item>
+                        <item>
+                            <term><c>`MSD..<paramref name="s"/>..MSD`</c></term>
+                            <desc>
+                                MSD at the start and end means Message Box
+                                <br></br>Done and you can use it to display normal information to the user
+                            </desc>
+                        </item>
+                        <item>
+                            <term><c>`CC..<paramref name="s"/>..CC`</c></term>
+                            <desc>
+                                Prints as the color specified in <see cref="P:Functions.AdvancedConsole.AdvancedConsolePrinter.DefaultCustomColor"/>
+                            </desc>
+                        </item>
+                    </list>
+                </para>
+                <br>
+                    <c><see langword = "IMPORTANT "/>:</c>
+                    <br></br>Please Note: In case <c><paramref name="s"/></c> starts with <c>'$$'</c> the different syntax and
+                    functions are <c><see langword="IGNORED"/></c> and the<br></br> text will be printed as
+                    it was was in the parameter <paramref name="s"/>
+                    without any special cases nor colors
+                </br>
+            </remarks>
+            <param name="s"></param>
+            <param name="ln"></param>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedConsolePrinter.ResetColors">
+            <summary>
+            Resets the default color for the different <c><see cref="T:Functions.AdvancedConsole.AdvancedConsolePrinter.PrintType"/></c> passed in the
+            <c><see cref="M:Functions.AdvancedConsole.AdvancedConsolePrinter.Print(System.String,Functions.AdvancedConsole.AdvancedFormatter,System.Boolean,System.Boolean)"/> </c>method
+            </summary>
+        </member>
+        <member name="T:Functions.AdvancedConsole.FormatterConstruction">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Functions.AdvancedConsole.AdvancedFormatter.EndSeparator">
+            <summary>
+            nice val
+            </summary>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedFormatter.#ctor(System.String,System.ConsoleColor,System.ConsoleColor,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="startSeparator"></param>
+            <param name="foreColor"></param>
+            <param name="backColor"></param>
+            <param name="endSeperator"></param>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedFormatter.#ctor(System.String,System.ConsoleColor,System.ConsoleColor,Functions.AdvancedConsole.FormatterConstruction)">
+            <summary>
+            This one can use html and xml formatting.
+            </summary>
+            <param name="startSeparator"></param>
+            <param name="foreColor"></param>
+            <param name="backColor"></param>
+            <param name="endSeperator"></param>
+            <param name="fc"></param>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedFormatter.GetRawStartSeparator">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedFormatter.GetRawEndSeparator">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedFormatter.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedFormatter.ToString">
+            <summary>
+            <inheritdoc cref="M:System.Object.ToString"/>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedFormatter.op_Equality(Functions.AdvancedConsole.AdvancedFormatter,Functions.AdvancedConsole.AdvancedFormatter)">
+            <summary>
+            Compares two<see cref="T:Functions.AdvancedConsole.AdvancedFormatter"/>(s) returns the <b>result</b>
+            <list type="bullet">
+            <item>
+            <term><paramref name="a"/> <b>AND</b> <paramref name="b"/> </term>
+            are both <see langword = "null"></see>
+            </item>
+            <br/><br><br><para></para></br></br><b>OR</b>
+            <item>
+            <term><paramref name="a"/> <b>AND</b> <paramref name="b"/> </term>
+            both have the same <b><see cref="P:Functions.AdvancedConsole.AdvancedFormatter.BackColor"/></b>, <b><see cref="P:Functions.AdvancedConsole.AdvancedFormatter.ForeColor"/></b>
+            , <b><see cref="T:Functions.AdvancedConsole.FormatterConstruction"/></b> , <b><see cref="P:Functions.AdvancedConsole.AdvancedFormatter.StartSeparator"/></b>
+            , <b><see cref="P:Functions.AdvancedConsole.AdvancedFormatter.EndSeparator"/></b> <see langword = "Values"/>
+            </item>
+            </list>
+            Otherwise <see langword = "false"/>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>The <b>result</b> of the comparision specified in the criteria above ^</returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.AdvancedFormatter.op_Inequality(Functions.AdvancedConsole.AdvancedFormatter,Functions.AdvancedConsole.AdvancedFormatter)">
+            <summary>
+            Compares two<see cref="T:Functions.AdvancedConsole.AdvancedFormatter"/>(s) returns the <b>result</b>
+            <br></br><br></br>Returns <see langword= "true"/> in case:
+            <list type="bullet">
+            <item>
+            <term><paramref name="a"/> <b>OR</b> <paramref name="b"/> </term>
+            in case <paramref name="a"/> or <paramref name="b"/> are <see langword = "null"/> and the other one is not <see langword = "null"/>
+            </item>
+            <br/><br><br><para></para></br></br><b>OR</b> if they are both <b>not </b>- <see langword = "null"/>
+            <item>
+            <term><paramref name="a"/> <b>AND</b> <paramref name="b"/> </term>
+            both have different <b><see cref="P:Functions.AdvancedConsole.AdvancedFormatter.BackColor"/></b>, <b><see cref="P:Functions.AdvancedConsole.AdvancedFormatter.ForeColor"/></b>
+            , <b><see cref="T:Functions.AdvancedConsole.FormatterConstruction"/></b> , <b><see cref="P:Functions.AdvancedConsole.AdvancedFormatter.StartSeparator"/></b>
+            , <b><see cref="P:Functions.AdvancedConsole.AdvancedFormatter.EndSeparator"/></b> <see langword = "Values"/>
+            </item>
+            </list>
+            Otherwise <see langword = "false"/>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns>The <b>result</b> of the comparision specified in the criteria above ^
+            <seealso cref="T:Functions.AdvancedConsole.AdvancedConsolePrinter"/></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.ConsoleData.GetNumberFromUser(System.String)">
+            <summary>
+            Returns a float number While asking the user for an Input
+            <br><paramref name="nameOfInput"/> is the name of the input to be asked</br>
+            </summary>
+            <param name="nameOfInput"></param>
+            <returns>A float number (floating point allowed) that the user provides</returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.ConsoleData.GetNumberFromUser(System.String,System.Predicate{System.Single},System.String[])">
+            <summary>
+            Returns a float number While asking the user for an Input that is a<br></br> valid number and matches the requirements specified in the
+            <paramref name="pre"/> Predicate 
+            </summary>
+            <remarks>
+            <br><paramref name="nameOfInput"/> is the name of the input to be asked</br>
+            <br><paramref name="pre"/> the predicate to match the float number with</br>
+            <br><paramref name="predicateReq"/> In case the user doesn't provide a valid number the system displays all of the potential reasons,<br></br>
+            so that the user can fix his input according to requirements <br>For example: <para>If the following method is called
+            <see cref="M:Functions.AdvancedConsole.ConsoleData.GetNumberFromUser(System.String,System.Predicate{System.Single},System.String[])"/></para></br></br>
+            <example>
+            <param name="nameOfInput">is 5</param>
+            </example>
+            </remarks>
+            <param name="nameOfInput"></param>
+            <param name="pre"></param>
+            <param name="predicateReq"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.ConsoleData.GetDateFromUser(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="numOfTabs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.ConsoleData.GetSpecificAns(System.String,System.Boolean,System.Boolean,System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="nameOfInput"></param>
+            <param name="caseSensitive"></param>
+            <param name="overrideColors"></param>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.ConsoleData.GetSpecificAns(System.String,System.Boolean,System.Boolean,System.Predicate{System.String},System.String[],System.String[],System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="nameOfInput"></param>
+            <param name="caseSensitive"></param>
+            <param name="overrideColors"></param>
+            <param name="pre"></param>
+            <param name="options"></param>
+            <param name="requirements"></param>
+            <param name="includeOptionsWhenError"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.ConsoleData.GetExcludedSpecificAns(System.String,System.Boolean,System.Predicate{System.String},System.String[],System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="nameOfInput"></param>
+            <param name="caseSensitive"></param>
+            <param name="pre"></param>
+            <param name="excludedOptions"></param>
+            <param name="requirements"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.ConsoleData.GetExcludedSpecificAns(System.String,System.Boolean,System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="nameOfInput"></param>
+            <param name="caseSensitive"></param>
+            <param name="excludedOptions"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.AdvancedConsole.ConsoleData.GetBoolFromUser(System.String)">
+            <summary>
+            Gets a true or false value from the user
+            </summary>
+            <remarks>
+            Asks a user for input as the following syntax <br></br>
+            "<paramref name="nameOfInput"/>(Y/N): * here goes user input *
+            </remarks>
+            <param name="nameOfInput"></param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="T:Functions.Calculator.AdvancedCalculations">
+            <summary>
+            Used For More advanced calculations than <see cref="T:Functions.Calculator.BasicCalculations"/> class, such as complex
+            <c>algorithms</c> or any other type of advanced calculations
+            </summary>
+        </member>
+        <member name="M:Functions.Calculator.AdvancedCalculations.ValidIsraeliID(System.String)">
+            <summary>
+            This is a test for the 1.0.21 version of this NuGet (Functions) .csporj
+            </summary>
+            <param name="idToCheck"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.Calculator.BasicCalculations.GetEmptyString(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="n"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.Calculator.ScreenCalculate.GetMiddleFormPoint(System.Windows.Forms.Form)">
+            <summary>
+            
+            </summary>
+            <param name="f"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.Calculator.ScreenCalculate.GetMiddleScreen">
+            <summary>
+            Get the middle screen point For example :
+            If the your screen width is <c>50px</c> and height is <c>30px</c>
+            than the returned <c>Point</c> is <c>(25, 15)</c>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Functions.Calculator.DateManipulations">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Functions.Calculator.DateManipulations.ToStringPlus(System.DateTime)">
+            <summary>
+            
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.Calculator.DateManipulations.GetCurrentGmt">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.Extensions.BasicTypesExtensions.IsNumericType(System.String,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="s"></param>
+            <param name="allowFloatingPoint"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Functions.Extensions.EnumerableExtension">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Functions.Extensions.EnumerableExtension.TORS.Terminate">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Functions.Extensions.EnumerableExtension.TORS.Silent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Functions.Extensions.EnumerableExtension.DequeueLast``1(System.Collections.Generic.Queue{``0})">
+            <summary>
+            Removes The last Element in a queue.
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="q">the q</param>
+        </member>
+        <member name="M:Functions.Extensions.EnumerableExtension.JoinTogether``1(System.Collections.Generic.Queue{``0},System.Collections.Generic.Queue{``0})">
+             <summary>
+             
+             </summary>
+             <typeparam name="TSource"></typeparam>
+             <param name="first"></param>
+             <param name="sec"></param>
+             <returns></returns>
+            
+        </member>
+        <member name="M:Functions.Extensions.EnumerableExtension.AllElementsToString``1(System.Collections.Generic.IEnumerable{``0},System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+            <param name="createNewLineUponVar"></param>
+            <typeparam name="TSource"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.Extensions.EnumerableExtension.CloneByReference``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Clones an <see cref="T:System.Collections.Generic.IEnumerable`1"/> and returns it.
+            </summary>
+            <remarks>
+            Clones an <see cref="T:System.Collections.Generic.IEnumerable`1"/> from type <typeparamref name="TSource"/> into a new
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> of type <typeparamref name="TSource"/> and returns the new
+            <see cref="T:System.Collections.Generic.IEnumerable`1"/> that had been created
+            </remarks>
+            <param name="q"></param>
+            <typeparam name="TSource"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Functions.Extensions.EnumerableExtension.SubstringInd(System.String,System.Int32,System.Int32)">
+            <summary>
+            This Method Causes some trouble, please wait until it will be fixed.
+            </summary>
+            <param name="s"></param>
+            <param name="start"></param>
+            <param name="end"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Functions.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Functions.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Functions.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Functions.Properties.Resources._34c6551de3120d74ee79059b5cd3fcae___computer_icon_cloud_computing">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Functions.Properties.Resources._603197">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+    </members>
+</doc>

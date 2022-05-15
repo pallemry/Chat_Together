@@ -1,0 +1,13 @@
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\bin\Debug\Form Functions.dll
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\bin\Debug\Form Functions.pdb
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form Functions.csproj.AssemblyReference.cache
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form Functions.csproj.CoreCompileInputs.cache
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form Functions.dll
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form Functions.pdb
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Chat_Together.ChatMessage.resources
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form Functions.csproj.GenerateResource.cache
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form_Functions.ChatLog.resources
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form_Functions.Properties.Resources.resources
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form_Functions.LogIn.resources
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form_Functions.AccountSettings.resources
+C:\Users\yisha\source\repos\ChatTogether\Form Functions\obj\Debug\Form_Functions.Input_box.resources
