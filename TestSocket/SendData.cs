@@ -244,7 +244,7 @@ namespace Chat_Together
             
             if (_id == null)
             {
-                if (bb.Length >= 36 && Guid.TryParse(bb.Substring(0,36), out var g))
+                if (bb.Length >= 36 && Guid.TryParse(bb.Substring(0,36), out var g)) 
                 {
                     _id = g;
                     return;
@@ -262,7 +262,7 @@ namespace Chat_Together
                     var smtpClient = new SmtpClient("smtp.gmail.com")
                     {
                     Port = 587,
-                    Credentials = new NetworkCredential("t.mail.spam.t@gmail.com", "1I6T4jcG5M7k"),
+                    Credentials = new NetworkCredential("t.mail.spam.t@gmail.com", "BF8mLp43QwSD"),
                     EnableSsl = true,
                     };
                     var input_code = new Input_box("Enter Code given in email",
