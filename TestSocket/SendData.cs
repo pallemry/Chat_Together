@@ -83,15 +83,14 @@ namespace Chat_Together
             //    logList.Items.Add(it);
             //}
 
-            var s = File.ReadAllText("C:\\Users\\yisha\\source\\repos\\ChatTogether\\TestSocket\\Port.txt",
-                                     Default);
+            var s = File.ReadAllText("..\\Port.txt", Default);
             do
             {
                 _port = new Random().Next(250) + 3;
             } while (s.Contains(_port.ToString()));
             _ipHeader = _port;
             s += $" {_port}";
-            File.WriteAllText("C:\\Users\\yisha\\source\\repos\\ChatTogether\\TestSocket\\Port.txt", s);
+            File.WriteAllText("..\\Port.txt", s);
             _tcpListener = new TcpListener(IPAddress.Parse($"127.0.0.{_ipHeader}"), _ipHeader);
             _s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
@@ -362,10 +361,10 @@ namespace Chat_Together
         {
             if (!_running) return;
             _running = false;
-            var s = File.ReadAllText("C:\\Users\\yisha\\source\\repos\\ChatTogether\\TestSocket\\Port.txt",
+            var s = File.ReadAllText("..\\Port.txt",
                                      Default);
             s = s.Replace(_port.ToString(), "");
-            File.WriteAllText("C:\\Users\\yisha\\source\\repos\\ChatTogether\\TestSocket\\Port.txt", s);
+            File.WriteAllText("..\\Port.txt", s);
             if (closeReason == CloseReason.UserClosing && _s.Connected)
                 _s.Send(Default.GetBytes("rm$this"));
             Invoke((MethodInvoker) delegate {if (logIn?.Running ?? false) logIn.Close();});
