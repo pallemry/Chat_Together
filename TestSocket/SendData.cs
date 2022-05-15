@@ -244,7 +244,7 @@ namespace Chat_Together
             
             if (_id == null)
             {
-                if (bb.Length >= 36 && Guid.TryParse(bb.Substring(0,36), out var g))
+                if (bb.Length >= 36 && Guid.TryParse(bb.Substring(0,36), out var g)) 
                 {
                     _id = g;
                     return;
