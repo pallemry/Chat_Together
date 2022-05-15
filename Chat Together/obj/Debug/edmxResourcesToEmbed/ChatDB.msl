@@ -14,7 +14,7 @@
     <EntitySetMapping Name="Users">
       <EntityTypeMapping TypeName="ChatTogtherModel.User">
         <MappingFragment StoreEntitySet="User">
-          <ScalarProperty Name="ImageURL" ColumnName="ImageURL" />
+          <ScalarProperty Name="HasUniquePicture" ColumnName="HasUniquePicture" />
           <ScalarProperty Name="HasAdminPrivileges" ColumnName="HasAdminPrivileges" />
           <ScalarProperty Name="UserName" ColumnName="UserName" />
           <ScalarProperty Name="Password" ColumnName="Password" />

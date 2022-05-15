@@ -19,7 +19,7 @@
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <NavigationProperty Name="Message_Record" Relationship="Self.UserMessages" FromRole="User" ToRole="Message_Record" />
     <Property Name="HasAdminPrivileges" Type="Boolean" Nullable="false" />
-    <Property Name="ImageURL" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="HasUniquePicture" Type="Boolean" Nullable="false" />
   </EntityType>
   <Association Name="UserMessages">
     <End Role="User" Type="Self.User" Multiplicity="0..1" />

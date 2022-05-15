@@ -88,8 +88,8 @@ namespace Chat_Together
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-            chatLog1.AddMessage(textBox1.Text, _currentUser?.Name, 
-                                Resources.Shopping_cart_icon_svg.ToBitmap(),
+            chatLog1.AddMessage(textBox1.Text, _currentUser?.Name,
+                                Resources._3840x2160_lake_dark_night_starry_sky_landscape,
                                 _defaultMessageWidth);
             if (!_s.Connected) return;
             var msg = textBox1.Text;
@@ -101,8 +101,8 @@ namespace Chat_Together
             }
             textBox1.Text = @"";
         }
-        
-        
+
+        private Image profileImage;
         private Timer? _tmr = new (1000);
         private void SendData_Load(object sender, EventArgs e)
         {
@@ -160,7 +160,6 @@ namespace Chat_Together
                 if (!_loadingRunner.IsAlive) return;
                 _loadingRunner.Join();
                 });
-                _s.Send(Default.GetBytes("req$usr"));
              });
             // Manages the Log - In to continue until the user have provided a valid answer
             StartLogInProcess();
@@ -264,7 +263,7 @@ namespace Chat_Together
                     var smtpClient = new SmtpClient("smtp.gmail.com")
                     {
                     Port = 587,
-                    Credentials = new NetworkCredential("t.mail.spam.t@gmail.com", "BF8mLp43QwSD"),
+                    Credentials = new NetworkCredential("t.mail.spam.t@gmail.com", "k4t%Q9SVlclm1V9c"),
                     EnableSsl = true,
                     };
                     var input_code = new Input_box("Enter Code given in email",
@@ -311,12 +310,13 @@ namespace Chat_Together
                         sendButton.Enabled = true;
                         _isUserValid = true;
                         _currentUser = new User(us[0], us[1]);
+                        profileImage = Image.FromFile(@".\Resources\UserProfileImages\defaultUser.png");
                     }
                     else
                         _isUserValid = false;
                     break;
                 case "unreadmsg":
-                    chatLog1.AddMessage(res[2] , res[1] , Resources._3840x2160_lake_dark_night_starry_sky_landscape, _defaultMessageWidth);
+                    chatLog1.AddMessage(res[2], res[1], Resources._3840x2160_lake_dark_night_starry_sky_landscape, _defaultMessageWidth);
                     return;
 
             }

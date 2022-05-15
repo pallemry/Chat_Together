@@ -8,6 +8,8 @@
         <EntityTypeShape EntityType="ChatTogtherModel.Message_Record" Width="1.5" PointX="7" PointY="2.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ChatTogtherModel.zzzz" Width="1.5" PointX="6.875" PointY="1" IsExpanded="true" />
         <AssociationConnector Association="ChatTogtherModel.UserMessages" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ChatTogtherModel.User" Width="1.5" PointX="10.75" PointY="2.75" />
+        <AssociationConnector Association="ChatTogtherModel.UserMessages" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

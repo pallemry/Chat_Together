@@ -93,6 +93,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ChatDB.edmx</DependentUpon>
     </Compile>
+    <Compile Include="ChatDB1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ChatDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="ChatTogether.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,6 +131,7 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ChatDB.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <None Include="bin\Debug\Chat Together.exe.config" />
     <None Include="ChatDB.edmx.diagram">
       <DependentUpon>ChatDB.edmx</DependentUpon>
     </None>
@@ -169,6 +175,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Connection String SQL Server DataBase.txt" />
+    <Content Include="bin\Debug\Chat Together.exe" />
+    <Content Include="bin\Debug\Chat Together.pdb" />
+    <Content Include="bin\Port.txt" />
+    <Content Include="bin\Debug\Resources\UserProfileImages\defaultUser.png" />
     <Content Include="ChatDB.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ChatDB.edmx</DependentUpon>
@@ -177,9 +188,12 @@
     <Content Include="ChatDB.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ChatDB.edmx</DependentUpon>
-      <LastGenOutput>ChatDB.cs</LastGenOutput>
+      <LastGenOutput>ChatDB1.cs</LastGenOutput>
     </Content>
     <None Include="Resources\hqdefault.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Release\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

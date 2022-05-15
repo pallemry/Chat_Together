@@ -25,7 +25,8 @@ namespace Chat_Together
         public int id { get; set; }
         public bool HasAdminPrivileges { get; set; }
         public string ImageURL { get; set; }
-    
+        public bool HasUniquePicture { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Message_Record> Message_Record { get; set; }
     }

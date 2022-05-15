@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -128,6 +129,31 @@ namespace Form_Functions
             Input_box imageURI = new Input_box("Change Profile Image",
                                                new TextBoxInformation("New Image URL",
                                                                       "Paste new image url here"));
+            imageURI.ClosedINBox += (o, args) => {
+                try
+                {
+                    string[] validExtensions = { ".jpg", ".png", ".jpeg" };
+                    Uri imageUri;
+
+                    if (!Uri.TryCreate(args.Inputs[0], UriKind.Absolute, out imageUri)) throw new Exception();
+                    if (!validExtensions.Contains(Path.GetExtension(imageUri.AbsolutePath))) throw new Exception();
+
+                    using var wc = new WebClient();
+                    var imagePath = @".\Resources\UserProfileImages\" + UserName +
+                                    Path.GetExtension(imageUri.AbsolutePath);
+                    if (!File.Exists(imagePath))
+                        File.Create(imagePath);
+                    wc.DownloadFile(imageUri, imagePath);
+                    UserPicutreBox.BackgroundImage = Image.FromFile(imagePath);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("URL entred is either invalid or does not contain actual photo.");
+                    return;
+                }
+            };
+            Task.Run(() => Application.Run(imageURI));
+
         }
     }
 }

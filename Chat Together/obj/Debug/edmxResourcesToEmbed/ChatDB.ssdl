@@ -17,7 +17,7 @@
     <Property Name="Password" Type="nvarchar(max)" />
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="HasAdminPrivileges" Type="bit" Nullable="false" />
-    <Property Name="ImageURL" Type="nvarchar(max)" />
+    <Property Name="HasUniquePicture" Type="bit" Nullable="false" />
   </EntityType>
   <Association Name="UserMessages">
     <End Role="User" Type="Self.User" Multiplicity="0..1" />

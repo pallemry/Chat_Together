@@ -22,7 +22,7 @@
           <Property Name="Password" Type="nvarchar(max)" />
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="HasAdminPrivileges" Type="bit" Nullable="false" />
-          <Property Name="ImageURL" Type="nvarchar(max)" />
+          <Property Name="HasUniquePicture" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="UserMessages">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -67,7 +67,7 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Message_Record" Relationship="Self.UserMessages" FromRole="User" ToRole="Message_Record" />
           <Property Name="HasAdminPrivileges" Type="Boolean" Nullable="false" />
-          <Property Name="ImageURL" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="HasUniquePicture" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="UserMessages">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -108,7 +108,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="ChatTogtherModel.User">
               <MappingFragment StoreEntitySet="User">
-                <ScalarProperty Name="ImageURL" ColumnName="ImageURL" />
+                <ScalarProperty Name="HasUniquePicture" ColumnName="HasUniquePicture" />
                 <ScalarProperty Name="HasAdminPrivileges" ColumnName="HasAdminPrivileges" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
