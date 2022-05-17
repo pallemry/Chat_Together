@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 namespace Form_Functions
 {
@@ -68,5 +70,9 @@ namespace Form_Functions
         {
             cb.CheckedChanged += (sender, args) => tb.UseSystemPasswordChar = !cb.Checked;
         }
+
+        public static string? GetSolutionPath() => Directory.GetParent(Directory.GetCurrentDirectory())?.Parent.Parent.FullName;
+        public static string? GetResourcesPath() => $"{GetSolutionPath()}\\resources\\UserImageProfiles";
+
     }
 }

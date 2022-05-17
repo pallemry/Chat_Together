@@ -7,7 +7,9 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -52,7 +54,6 @@ namespace Form_Functions
 
         private string _password;
         private string _userName;
-        public string ImageURI { get; set; }
         public event Action<object, string, string> PasswordChanged = null!;
         private void EditPasswordLabel_Click(object sender, EventArgs e)
         {
@@ -89,25 +90,60 @@ namespace Form_Functions
             });
         }
 
-        public AccountSettings(string userName, string password, string imageUri)
+        public AccountSettings(string userName, string password, Image originalPfp)
         {
             InitializeComponent();
             UserName = userName;
             Password = password;
-            ImageURI = imageUri;
             PasswordLabel.Text = "";
             UserNameLabel.Text = userName;
             EditPasswordLabel.Text = @"Edit..";
             EditPasswordLabel.ForeColor = Color.Gray;
             EditPasswordLabel.InitializeLinkLabel(FontStyle.Underline, EditPasswordLabel.Font.Size, Color.RoyalBlue);
             ChangeImageButtonLabel.InitializeLinkLabel(FontStyle.Underline, EditPasswordLabel.Font.Size, Color.RoyalBlue);
-            UserPicutreBox.BackgroundImage = OvalImage(UserPicutreBox.BackgroundImage);
+            ChangeImageByFileLbl.InitializeLinkLabel(FontStyle.Underline, EditPasswordLabel.Font.Size, Color.RoyalBlue);
+            DeleteProfilePictureLbl.InitializeLinkLabel(FontStyle.Underline, EditPasswordLabel.Font.Size, Color.RoyalBlue);
+            UserPicutreBox.BackgroundImage = OvalImage(originalPfp);
             for (int i = 0; i < password.Length; i++)
             {
                 PasswordLabel.Text += "*";
             }
 
 
+        }
+        public static Image GetProfilePictureByUserName(string userName)
+        {
+            Image pfp = null;
+            var dir = new DirectoryInfo(ControlsMisc.GetResourcesPath());
+            string[] validExtensions = { ".jpg", ".png", ".jpeg" }; 
+            FileInfo[] files = dir.GetFiles(userName + ".*");
+            if (files.Length > 0)
+            {
+                foreach (FileInfo file in files.Where(info => validExtensions.Contains(info.Extension)))
+                {
+                    try
+                    {
+                        var s = file.Open(FileMode.Open);
+                        pfp = Image.FromStream(s);
+                        s.Dispose();
+
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("Failed To Load Profile Picture!", "Error", MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error);
+                        pfp = Image.FromFile(ControlsMisc.GetResourcesPath() + "\\def\\defaultUser.png");
+                    }
+                    
+
+                }
+            }
+            else
+            {
+                pfp = Image.FromFile(ControlsMisc.GetResourcesPath() + "\\def\\defaultUser.png");
+            }
+
+            return pfp;
         }
         public static Image OvalImage(Image img)
         {
@@ -129,6 +165,9 @@ namespace Form_Functions
             Input_box imageURI = new Input_box("Change Profile Image",
                                                new TextBoxInformation("New Image URL",
                                                                       "Paste new image url here"));
+            imageURI.TextBoxes[0].Width += 300;
+            imageURI.Width += 300;
+            imageURI.ConfirmButton.Location = imageURI.ConfirmButton.Location with { X = imageURI.Width - 94 };
             imageURI.ClosedINBox += (o, args) => {
                 try
                 {
@@ -139,33 +178,100 @@ namespace Form_Functions
                     if (!validExtensions.Contains(Path.GetExtension(imageUri.AbsolutePath))) throw new Exception();
 
                     using var wc = new WebClient();
-                    var imagePath = @".\Resources\UserProfileImages\" + UserName +
+                    var imagePath = ControlsMisc.GetResourcesPath() + "\\" + UserName +
                                     Path.GetExtension(imageUri.AbsolutePath);
-                    var dir = new DirectoryInfo(@".\Resources\UserProfileImages\");
+                    var dir = new DirectoryInfo(ControlsMisc.GetResourcesPath());
                     FileInfo[] files = dir.GetFiles(UserName + ".*");
+                    
                     if (files.Length > 0)
                     {
                         //File exists
                         foreach (FileInfo file in files)
                         {
+                            
                             File.Delete(file.FullName);
+                            break;
                         }
                     }
                     else
                     {
-                        File.Create(imagePath);
+                        File.Create(imagePath).Close();
                     }
                     wc.DownloadFile(imageUri, imagePath);
-                    UserPicutreBox.BackgroundImage = Image.FromFile(imagePath);
+                    var s = File.Open(imagePath, FileMode.Open);
+                    UserPicutreBox.BackgroundImage = OvalImage(Image.FromStream(s));
+                    s.Dispose();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    MessageBox.Show("URL entred is either invalid or does not contain actual photo.");
+                    MessageBox.Show(ex.Source + "\n" + ex.Message + "\n" + ex.StackTrace);
+                    
                     return;
                 }
             };
             Task.Run(() => Application.Run(imageURI));
 
+        }
+
+        private void ChangeImageByFileLbl_Click(object sender, EventArgs e)
+        {
+            string imageDir = null;
+            Thread t = new Thread((ThreadStart)(() => {
+                OpenFileDialog op = new OpenFileDialog();
+                op.Multiselect = false;
+                op.Filter = "*Image Files (*.png, *.jpg, *.bmp, *.gif, *.jpeg)|*.png;*.jpg;*.bmp;*.gif;*.jpeg";
+                if (op.ShowDialog() != DialogResult.OK) return;
+                
+                var dir = new DirectoryInfo(ControlsMisc.GetResourcesPath());
+                FileInfo[] files = dir.GetFiles(UserName + ".*");
+                if (files.Length > 0)
+                {
+                    //File exists
+                    foreach (var file in files)
+                    {
+                        file.Delete();
+                        
+                    }
+
+                }
+
+                File.Copy(Path.GetFullPath(op.FileName), ControlsMisc.GetResourcesPath() + "\\" + UserName +
+                                                         Path.GetExtension(op.FileName));
+                
+                op.Dispose();
+            }));
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            UserPicutreBox.BackgroundImage = OvalImage(GetProfilePictureByUserName(UserName));
+            
+        }
+
+        private void DeleteProfilePictureLbl_Click(object sender, EventArgs e)
+        {
+            var dir = new DirectoryInfo(ControlsMisc.GetResourcesPath());
+            FileInfo[] files = dir.GetFiles(UserName + ".*");
+
+            if (files.Length > 0)
+            {
+                //File exists
+                var confirmDeletion = MessageBox.Show("Are you sure you want to delete your current Profile Picture? " +
+                                                      "\nNOTE: It will be gone forever and could not be retrieved" +
+                                                      "\nIf you wish to proceed press YES, ", "CONFIRMATION", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (confirmDeletion != DialogResult.Yes) return;
+                foreach (var file in files)
+                {
+                    File.Delete(file.FullName);
+                }
+                UserPicutreBox.BackgroundImage = OvalImage(Image.FromFile(dir.FullName + "\\def\\defaultUser.png"));
+                
+            }
+            else
+            {
+                MessageBox.Show("You don't have a profile picture to delete", "Logic error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            
         }
     }
 }

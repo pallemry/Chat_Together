@@ -36,6 +36,9 @@ namespace Form_Functions
             this.EditPasswordLabel = new System.Windows.Forms.Label();
             this.ChangeImageLabel = new System.Windows.Forms.Label();
             this.ChangeImageButtonLabel = new System.Windows.Forms.Label();
+            this.ChangeImageByFileLbl = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.DeleteProfilePictureLbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.UserPicutreBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -104,18 +107,53 @@ namespace Form_Functions
             // 
             this.ChangeImageButtonLabel.AutoSize = true;
             this.ChangeImageButtonLabel.Font = new System.Drawing.Font("Gadugi", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ChangeImageButtonLabel.Location = new System.Drawing.Point(221, 241);
+            this.ChangeImageButtonLabel.Location = new System.Drawing.Point(321, 264);
             this.ChangeImageButtonLabel.Name = "ChangeImageButtonLabel";
-            this.ChangeImageButtonLabel.Size = new System.Drawing.Size(34, 19);
+            this.ChangeImageButtonLabel.Size = new System.Drawing.Size(85, 19);
             this.ChangeImageButtonLabel.TabIndex = 6;
-            this.ChangeImageButtonLabel.Text = "test";
+            this.ChangeImageButtonLabel.Text = "URL image";
             this.ChangeImageButtonLabel.Click += new System.EventHandler(this.ChangeImageButtonLabel_Click);
+            // 
+            // ChangeImageByFileLbl
+            // 
+            this.ChangeImageByFileLbl.AutoSize = true;
+            this.ChangeImageByFileLbl.Font = new System.Drawing.Font("Gadugi", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ChangeImageByFileLbl.Location = new System.Drawing.Point(221, 264);
+            this.ChangeImageByFileLbl.Name = "ChangeImageByFileLbl";
+            this.ChangeImageByFileLbl.Size = new System.Drawing.Size(94, 19);
+            this.ChangeImageByFileLbl.TabIndex = 7;
+            this.ChangeImageByFileLbl.Text = "Exisiting File";
+            this.ChangeImageByFileLbl.Click += new System.EventHandler(this.ChangeImageByFileLbl_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Gadugi", 14F, System.Drawing.FontStyle.Bold);
+            this.label1.Location = new System.Drawing.Point(221, 241);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(251, 21);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Change  Profile picture by..";
+            // 
+            // DeleteProfilePictureLbl
+            // 
+            this.DeleteProfilePictureLbl.AutoSize = true;
+            this.DeleteProfilePictureLbl.Font = new System.Drawing.Font("Gadugi", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DeleteProfilePictureLbl.Location = new System.Drawing.Point(450, 264);
+            this.DeleteProfilePictureLbl.Name = "DeleteProfilePictureLbl";
+            this.DeleteProfilePictureLbl.Size = new System.Drawing.Size(154, 19);
+            this.DeleteProfilePictureLbl.TabIndex = 9;
+            this.DeleteProfilePictureLbl.Text = "Delete Profile Picture";
+            this.DeleteProfilePictureLbl.Click += new System.EventHandler(this.DeleteProfilePictureLbl_Click);
             // 
             // AccountSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(605, 450);
+            this.Controls.Add(this.DeleteProfilePictureLbl);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.ChangeImageByFileLbl);
             this.Controls.Add(this.ChangeImageButtonLabel);
             this.Controls.Add(this.ChangeImageLabel);
             this.Controls.Add(this.EditPasswordLabel);
@@ -140,5 +178,8 @@ namespace Form_Functions
         private System.Windows.Forms.Label EditPasswordLabel;
         private System.Windows.Forms.Label ChangeImageLabel;
         private System.Windows.Forms.Label ChangeImageButtonLabel;
+        private System.Windows.Forms.Label ChangeImageByFileLbl;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label DeleteProfilePictureLbl;
     }
 }

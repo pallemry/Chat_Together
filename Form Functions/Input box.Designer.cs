@@ -56,6 +56,6 @@ namespace Form_Functions
 
         #endregion
 
-        private System.Windows.Forms.Button ConfirmButton;
+        public System.Windows.Forms.Button ConfirmButton;
     }
 }

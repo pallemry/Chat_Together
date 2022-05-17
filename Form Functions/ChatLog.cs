@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -32,7 +33,7 @@ namespace Form_Functions
                                Image userImage, int width)
         {
             var m = new ChatMessage(text, width, userName);
-            m.UserImage.Image = userImage;
+            m.UserImage.Image = OvalImage(userImage);
             m.Author.Text = userName;
             var last = _meesageRecs.Count != 0 ? _meesageRecs.Last() : null;
             m.Location = Equals(last, null)
@@ -47,6 +48,20 @@ namespace Form_Functions
         {
             //BackgroundImage = Properties.Resources._3840x2160_lake_dark_night_starry_sky_landscape;
             //BackgroundImageLayout = BackgroundImageLayout == ImageLayout.Stretch ? ImageLayout.Center : ImageLayout.Stretch;
+        }
+        public static Image OvalImage(Image img)
+        {
+            Bitmap bmp = new Bitmap(img.Width, img.Height);
+            using (GraphicsPath gp = new GraphicsPath())
+            {
+                gp.AddEllipse(0, 0, img.Width + 3, img.Height + 3);
+                using (Graphics gr = Graphics.FromImage(bmp))
+                {
+                    gr.SetClip(gp);
+                    gr.DrawImage(img, Point.Empty);
+                }
+            }
+            return bmp;
         }
     }
 }
