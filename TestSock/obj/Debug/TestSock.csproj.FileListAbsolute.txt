@@ -1,9 +1,0 @@
-C:\Users\yisha\source\repos\ChatTogether\TestSock\bin\Debug\TestSock.exe.config
-C:\Users\yisha\source\repos\ChatTogether\TestSock\bin\Debug\TestSock.exe
-C:\Users\yisha\source\repos\ChatTogether\TestSock\bin\Debug\TestSock.pdb
-C:\Users\yisha\source\repos\ChatTogether\TestSock\obj\Debug\TestSock.Form1.resources
-C:\Users\yisha\source\repos\ChatTogether\TestSock\obj\Debug\TestSock.Properties.Resources.resources
-C:\Users\yisha\source\repos\ChatTogether\TestSock\obj\Debug\TestSock.csproj.GenerateResource.cache
-C:\Users\yisha\source\repos\ChatTogether\TestSock\obj\Debug\TestSock.csproj.CoreCompileInputs.cache
-C:\Users\yisha\source\repos\ChatTogether\TestSock\obj\Debug\TestSock.exe
-C:\Users\yisha\source\repos\ChatTogether\TestSock\obj\Debug\TestSock.pdb
