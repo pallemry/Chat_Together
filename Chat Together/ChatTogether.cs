@@ -30,7 +30,7 @@ namespace Chat_Together
         private int? codeSent = null;
         
        
-
+        // Constructor
         public ChatTogether()
         {
             InitializeComponent();
@@ -38,17 +38,19 @@ namespace Chat_Together
             // Takes care of the last ports, if they were not closed properly.
             File.WriteAllText("..\\Port.txt", "");
 
-            cte = new ();
+            cte = new (); // Initialize databse
             _l = new Listener(9);
             tcpClients = new Dictionary<string, TcpClient>();
+            
+            // This timer is responsible for sending the message back to those who got them each 2.2 seconds.
             Timer t = new(2200);
             t.Elapsed += (_, _) => {
-                if (!_l.Listening)
+                if (!_l.Listening) //if we're connected
                 {
                     t.Stop();
                     return;
                 }
-
+                // This foreach finds all the clients who has unread messages, and responisble for sending them those messages
                 foreach (var client in from client in _l.ConnectedClients 
                                        where client.Socket.Connected && tcpClients.ContainsKey(client.ID) && client.UnreadMessages.Count > 0
                                        select client)
@@ -68,22 +70,29 @@ namespace Chat_Together
                     
                 }
             };                 
-            t.Start();
+            t.Start(); // start the unreadmsg timer
+            
+            // When a new client is getting connected...
             _l.SocketAccepted += socket => {
 
-            var c = _l.LatestConnected;
+            var c = _l.LatestConnected; // set the last connected property to the most recent client connected
+            
+            // When a new client sends back a message.
             c.Received += (sender, data) =>
             {
-                var dataRec = Encoding.Default.GetString(data);
-                var dateRec = DateTime.Now;
-                var responseBasedOnData = GetResponseBasedOnData(dataRec, c);
+                var dataRec = Encoding.Default.GetString(data); // the data the client sent to the sever
+                var dateRec = DateTime.Now; // the date-time the data has been sent
+                var responseBasedOnData = GetResponseBasedOnData(dataRec, c); // the respone th sever should respond
                 var b = Encoding.Default.GetBytes(responseBasedOnData);
                 var checkedIDs = new List<string>();
-                Message_Record record = null; 
+                Message_Record record = null; //The data represnted as a message record in the database
+                
+                //Send the message to all other connected clients
                 foreach (var client in _l.ConnectedClients.Where(client => c.ID != client.ID && responseBasedOnData.Equals("Received") && 
                                                                            !checkedIDs.Contains(client.ID)))
                 {
                     if (c.User == null) break;
+                    //init mesage rec
                     record = new Message_Record
                     { 
                     Message = dataRec, 
@@ -95,11 +104,15 @@ namespace Chat_Together
                     checkedIDs.Add(client.ID);
                 }
                 Thread.Sleep(1000);
+                
+                //If its the first time the user sends a message add the client to a list of tcpClients so we could keep track of him
                 if (c.TimesRec <= 0)
                 {
                     tcpClients.Add(c.ID, new TcpClient($"127.0.0.{int.Parse(dataRec)}",
                         int.Parse(dataRec)));
                 }
+                
+                //Send the response back to the client
                 try
                 {
                     if (tcpClients.ContainsKey(c.ID))
@@ -122,7 +135,7 @@ namespace Chat_Together
                     MessageBox.Show(e.ToString(), "error", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Information
                     , MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly, true);
                 }
-                // Adds the client to the list view
+                // Adds the client to the list view (The visual window of the sever)
                 if (c.TimesRec<= 0)
                 {
                     Invoke((MethodInvoker)delegate
@@ -165,6 +178,9 @@ namespace Chat_Together
                     }
                 });
             };
+            
+            // When a client has disconnected from the main sever either by being terminated, closed or lost connection. Remove him from any list/view,
+            // close all connections and release all resources related with the client
             void OnCOnDisconnected(Client sender)
             {
                 Invoke((MethodInvoker) delegate {
@@ -192,7 +208,8 @@ namespace Chat_Together
             c.Disconnected += OnCOnDisconnected; }; 
             _l.Start();
         }
-
+        
+        // This method gets as an input the data/message recieved from the client and the client reference itself.
         private string GetResponseBasedOnData(string data, Client c)
         {
             var serverCommand = data.Split('$');
