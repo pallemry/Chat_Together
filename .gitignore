@@ -6,3 +6,6 @@
 /TestSocket/bin
 /.vs
 *.exe
+*.suo
+*.user
+_ReSharper.*
