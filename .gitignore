@@ -1,8 +1,8 @@
-Chat Together/bin/
-Chat Together/obj/
-Form Functions/bin/
-Form Functions/obj/
-TestSocket/obj/
-TestSocket/bin/
-.vs/
+/Chat Together/bin/Debug
+/Chat Together/obj
+/Form Functions/bin
+/Form Functions/obj
+/TestSocket/obj
+/TestSocket/bin
+/.vs
 *.exe
