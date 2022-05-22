@@ -90,7 +90,7 @@ namespace Chat_Together
         {
             Timer t = new(100);
             t.Elapsed += LoadDraw;
-            t.Start();
+            //t.Start();
         }
     }
 }

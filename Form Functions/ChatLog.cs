@@ -51,11 +51,11 @@ namespace Form_Functions
         }
         public static Image OvalImage(Image img)
         {
-            Bitmap bmp = new Bitmap(img.Width, img.Height);
-            using (GraphicsPath gp = new GraphicsPath())
+            var bmp = new Bitmap(img.Width, img.Height);
+            using (var gp = new GraphicsPath())
             {
                 gp.AddEllipse(0, 0, img.Width + 3, img.Height + 3);
-                using (Graphics gr = Graphics.FromImage(bmp))
+                using (var gr = Graphics.FromImage(bmp))
                 {
                     gr.SetClip(gp);
                     gr.DrawImage(img, Point.Empty);

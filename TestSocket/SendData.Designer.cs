@@ -42,8 +42,8 @@ namespace Chat_Together
             this.accountSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.accountStatsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeAdminPrivilegesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chatLog1 = new Form_Functions.ChatLog();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chatLog1 = new Form_Functions.ChatLog();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -99,7 +99,6 @@ namespace Chat_Together
             this.menuStrip1.Size = new System.Drawing.Size(1920, 24);
             this.menuStrip1.TabIndex = 7;
             this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // editToolStripMenuItem
             // 
@@ -129,6 +128,7 @@ namespace Chat_Together
             // 
             // accountSettingsToolStripMenuItem
             // 
+            this.accountSettingsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("accountSettingsToolStripMenuItem.Image")));
             this.accountSettingsToolStripMenuItem.Name = "accountSettingsToolStripMenuItem";
             this.accountSettingsToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.accountSettingsToolStripMenuItem.Text = "Account Settings";
@@ -136,16 +136,29 @@ namespace Chat_Together
             // 
             // accountStatsToolStripMenuItem
             // 
+            this.accountStatsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("accountStatsToolStripMenuItem.Image")));
             this.accountStatsToolStripMenuItem.Name = "accountStatsToolStripMenuItem";
             this.accountStatsToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.accountStatsToolStripMenuItem.Text = "Account Stats";
             // 
             // changeAdminPrivilegesToolStripMenuItem
             // 
+            this.changeAdminPrivilegesToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("changeAdminPrivilegesToolStripMenuItem.Image")));
             this.changeAdminPrivilegesToolStripMenuItem.Name = "changeAdminPrivilegesToolStripMenuItem";
             this.changeAdminPrivilegesToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.changeAdminPrivilegesToolStripMenuItem.Text = "Change Admin Privileges";
+            this.changeAdminPrivilegesToolStripMenuItem.Text = "Acquire Admin Privileges";
             this.changeAdminPrivilegesToolStripMenuItem.Click += new System.EventHandler(this.changeAdminPrivilegesToolStripMenuItem_Click);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.sendButton);
+            this.panel1.Controls.Add(this.textBox1);
+            this.panel1.Controls.Add(this.closeButton);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 914);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1920, 112);
+            this.panel1.TabIndex = 8;
             // 
             // chatLog1
             // 
@@ -162,17 +175,6 @@ namespace Chat_Together
             this.chatLog1.Size = new System.Drawing.Size(1920, 890);
             this.chatLog1.TabIndex = 5;
             this.chatLog1.Load += new System.EventHandler(this.chatLog1_Load);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.sendButton);
-            this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Controls.Add(this.closeButton);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 914);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1920, 112);
-            this.panel1.TabIndex = 8;
             // 
             // SendData
             // 

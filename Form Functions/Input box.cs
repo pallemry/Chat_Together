@@ -54,7 +54,7 @@ namespace Form_Functions
 
         private void ConfirmButton_Click(object sender, EventArgs e)
         {
-            string[] inputs = new string[TextBoxes.Length];
+            var inputs = new string[TextBoxes.Length];
 
             for (var index = 0; index < TextBoxes.Length; index++)
             {

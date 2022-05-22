@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -89,20 +91,17 @@ namespace Chat_Together
         private void sendButton_Click(object sender, EventArgs e)
         {
             chatLog1.AddMessage(textBox1.Text, _currentUser?.Name,
-                                ProfileImage,
+                                ProfileImage ?? AccountSettings._defaultUserProfileImage,
                                 _defaultMessageWidth);
             if (!_s.Connected) return;
             var msg = textBox1.Text;
             var num = _s.Send(Default.GetBytes(msg));
-            if (num <= 0)
-            {
-                MessageBox.Show("Data could not be sent!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            if (num <= 0) { MessageBox.Show("Data could not be sent!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
             textBox1.Text = @"";
         }
         
-        private Image ProfileImage => AccountSettings.GetProfilePictureByUserName(_currentUser?.Name ?? "");
+        private Image? ProfileImage { get; set; }
+
         private Timer? _tmr = new (1000);
         private void SendData_Load(object sender, EventArgs e)
         {
@@ -171,7 +170,9 @@ namespace Chat_Together
                     var res = _rec.GetStream().Read(bb, 0, bb.Length);
                     if (res >= 1)
                     {
-                        BeginInvoke((MethodInvoker) delegate { ProcessServerResult(Default.GetString(bb)); });
+                        BeginInvoke((MethodInvoker) delegate {
+                            ProcessServerResult(Default.GetString(bb));
+                        });
                     }
                 }
                 catch (Exception exception)
@@ -185,6 +186,7 @@ namespace Chat_Together
             }
         }
 
+        private static Dictionary<string, Image?> _profileImages = new ();
         private volatile LogIn? logIn = null;
         protected virtual void StartLogInProcess()
         {
@@ -207,8 +209,9 @@ namespace Chat_Together
                         if (_isUserValid == true)
                         {
                             _isUserValid = null;
-                            MessageBox.Show($"Hi {_currentUser?.Name} We're glad to have you here! {_currentUser?.Password}");
+                            MessageBox.Show($"Hi {_currentUser?.Name}, We're glad to have you here!");
                             Invoke((MethodInvoker) delegate { Enabled = true; });
+
                             break;
                         }
 
@@ -310,14 +313,25 @@ namespace Chat_Together
                         sendButton.Enabled = true;
                         _isUserValid = true;
                         _currentUser = new User(us[0], us[1]);
-
-
+                        var dir = new DirectoryInfo(ControlsMisc.GetResourcesPath());
+                        FileInfo[] files = dir.GetFiles(_currentUser.Name + ".*");
+                        var image = (Image) null;
+                        foreach (var file in files)
+                        {
+                            var s = File.Open(file.FullName, FileMode.Open);
+                            image = Image.FromStream(s);
+                            s.Dispose();
+                            file.Delete();
+                        }
+                        if (_profileImages.ContainsKey(_currentUser.Name)) _profileImages.Remove(_currentUser.Name);
+                        _profileImages.Add(_currentUser.Name, image);
+                        ProfileImage = image;
                     }
                     else
                         _isUserValid = false;
                     break;
                 case "unreadmsg":
-                    chatLog1.AddMessage(res[2], res[1], AccountSettings.GetProfilePictureByUserName(res[1]), _defaultMessageWidth);
+                    chatLog1.AddMessage(res[2], res[1], _profileImages[res[1]] ?? AccountSettings._defaultUserProfileImage, _defaultMessageWidth);
                     return;
 
             }
@@ -354,11 +368,6 @@ namespace Chat_Together
             Scroll += (o, args) => { };
         }
 
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
         private void changeBgImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog op = new OpenFileDialog();
@@ -370,6 +379,7 @@ namespace Chat_Together
 
         private void accountSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            
             Task.Run(() => {
                 if (_currentUser == null) return;
                 var accountSettings = new AccountSettings(_currentUser.Name, _currentUser.Password, ProfileImage);
@@ -380,6 +390,12 @@ namespace Chat_Together
                     MessageBox.Show("Password changed successfully!");
                     accountSettings.Password = password;
 
+                };
+                accountSettings.ProfilePictureChanged += (o, args) => { 
+                    var commandBuffer = Default.GetBytes("changepfp$" + args.UserName + "$");
+                    _s.Send(commandBuffer);
+                    _profileImages[args.UserName] = args.NewProfileImage;
+                    ProfileImage = args.NewProfileImage ;
                 };
                 Application.Run(accountSettings);
 

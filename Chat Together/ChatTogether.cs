@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -11,6 +11,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+
+using Form_Functions;
 
 using Timer = System.Timers.Timer;
 
@@ -38,10 +40,9 @@ namespace Chat_Together
             // Takes care of the last ports, if they were not closed properly.
             File.WriteAllText("..\\Port.txt", "");
 
-            cte = new (); // Initialize databse
+            cte = new (); // Initialize database
             _l = new Listener(9);
             tcpClients = new Dictionary<string, TcpClient>();
-            
             // This timer is responsible for sending the message back to those who got them each 2.2 seconds.
             Timer t = new(2200);
             t.Elapsed += (_, _) => {
@@ -88,21 +89,25 @@ namespace Chat_Together
                 Message_Record record = null; //The data represnted as a message record in the database
                 
                 //Send the message to all other connected clients
-                foreach (var client in _l.ConnectedClients.Where(client => c.ID != client.ID && responseBasedOnData.Equals("Received") && 
-                                                                           !checkedIDs.Contains(client.ID)))
+                if (responseBasedOnData.Equals("Received"))
                 {
-                    if (c.User == null) break;
-                    //init mesage rec
-                    record = new Message_Record
-                    { 
-                    Message = dataRec, 
-                    dateOccured = dateRec,
-                    UserID = c.User.id,
-                    User = c.User
-                    };
-                    client.UnreadMessages.Enqueue(record);
-                    checkedIDs.Add(client.ID);
+                    foreach (var client in _l.ConnectedClients.Where(client => c.ID != client.ID && 
+                                                                               !checkedIDs.Contains(client.ID)))
+                    {
+                        if (c.User == null) break;
+                        //init mesage rec
+                        record = new Message_Record
+                        { 
+                        Message = dataRec, 
+                        dateOccured = dateRec,
+                        UserID = c.User.id,
+                        User = c.User
+                        };
+                        client.UnreadMessages.Enqueue(record);
+                        checkedIDs.Add(client.ID);
+                    }
                 }
+
                 Thread.Sleep(1000);
                 
                 //If its the first time the user sends a message add the client to a list of tcpClients so we could keep track of him
@@ -198,11 +203,15 @@ namespace Chat_Together
                     tcpClients.Remove(c.ID);
                     for (var i = 0; i < clientListView.Items.Count; i++)
                     {
-                        var client = clientListView.Items[i].Tag as Client;
+                        if (sender is { User: { } })
+                        {
+                            sender.User.IsOnline = false;
+                        }
                         if (!c.ID.Equals(clientListView.Items[i].SubItems[1].Text)) continue;
                         clientListView.Items.RemoveAt(i);
                         break;
                     }
+                    cte.SaveChanges();
                 });
             }
             c.Disconnected += OnCOnDisconnected; }; 
@@ -214,108 +223,141 @@ namespace Chat_Together
         {
             var serverCommand = data.Split('$');
 
-            if (serverCommand.Length >= 2)
+            if (serverCommand.Length < 1) return c.TimesRec <= 0 ? "Paired Successfully" : "Received";
+            Timer codeTimer = null;
+
+            switch (serverCommand[0])
             {
-                Timer codeTimer = null;
+                case "req":
+                    switch (serverCommand[1])
+                    {
+                        case "id":
+                            return c.ID;
 
-                switch (serverCommand[0])
-                {
-                    case "req":
-                        switch (serverCommand[1])
-                        {
-                            case "id":
-                                return c.ID;
+                        case "idmsg":
+                            //return cte.Message_Records.ToList().Last().MessageRec.ToString();
+                            return "not connected yet";
+                        case "usr":
+                            return "usr" + cte.Users.ToList()
+                                              .Aggregate("$", (s, user) => s + user.UserName + ":" + user.Password + "$");
+                        case "usr-p":
 
-                            case "idmsg":
-                                //return cte.Message_Records.ToList().Last().MessageRec.ToString();
-                                return "not connected yet";
-                            case "usr":
-                                return "usr" + cte.Users.ToList()
-                                                       .Aggregate("$", (s, user) => s + user.UserName + ":" + user.Password + "$");
-                            case "usr-v":
-                                // obtain the user to check from the Client request
-                                var us = serverCommand[2].Split(':');
-                                Func<User, bool> logInAttempt = user =>
-                                    user.Password.Equals(us[1]) && user.UserName.Equals(us[0]);
-                                Func<User, bool> newAccountAttempt = user => !user.UserName.Equals(us[0]);
+                            return cte.Users.ToList().Where(userToValidate => userToValidate.IsOnline).Aggregate(serverCommand[0] + "$", (s, user1) => {
+                                var byteArr = user1.ProfilePicture ?? new byte[] { 0 };
+                                var byteArrAsString = Encoding.Default.GetString(byteArr);
+                                return s + user1.UserName + ":" + byteArrAsString + "$";
+                            });
+                        case "usr-v":
+                            // obtain the user to check from the Client request
+                            var us = serverCommand[2].Split(':');
+                            bool logInAttempt(User user) => user.Password.Equals(us[1]) && user.UserName.Equals(us[0]);
+                            bool newAccountAttempt(User user) => !user.UserName.Equals(us[0]);
 
-                                switch (serverCommand.Last())
-                                {
-                                    case "0":
-                                        foreach (var client in cte.Users)
-                                        {
+                            switch (serverCommand.Last())
+                            {
+                                case "0":
+                                    var logInSuccesful = false;
+                                    foreach (var client in cte.Users)
+                                    {
                                             
-                                            //Checks to see if the user matches the name and password
-                                            if (client == null || !logInAttempt(client)) continue;
-                                            c.User = client;
-                                            return "usr-r$" + us[0] + ":" + us[1] + "$true$";
-                                        }
-                                        return "usr-r$" + "NaN:NaN" + "$false$";
-
-                                    case "1" when cte.Users.ToList().All(newAccountAttempt):
-                                        var tempUser = new User { Password = us[1], UserName = us[0] };
-                                        c.User = tempUser;
-                                        cte.Users.Add(tempUser);
-
-                                        try
+                                        //Checks to see if the user matches the name and password
+                                        if (client == null || !logInAttempt(client)) continue;
+                                        c.User = client;
+                                        client.IsOnline = true;
+                                        logInSuccesful = true;
+                                        if (client.ProfilePicture == null) break;
+                                        using var memoryStream = new MemoryStream(client.ProfilePicture);
+                                        var image = Image.FromStream(memoryStream);
+                                        using (var fileStream = File.Create($"{ControlsMisc.GetResourcesPath()}\\{client.UserName}.png"))
                                         {
-                                            cte.SaveChanges();
+                                            image.Save(fileStream, ImageFormat.Png);
                                         }
-                                        catch (Exception e)
-                                        {
-                                            Debug.Assert(false);
-                                        }
-                                        return "usr-r$" + us[0] + ":" + us[1] + "$true$";
+                                    }
+                                    cte.SaveChanges();
+                                    if (logInSuccesful) return "usr-r$" + us[0] + ":" + us[1] + "$true$";
+                                    return "usr-r$" + "NaN:NaN" + "$false$";
 
-                                    default:
-                                        return "usr-r$" + "NaN:NaN" + "$false$";
-                                }
-                        }
+                                case "1" when cte.Users.ToList().All(newAccountAttempt):
+                                    var tempUser = new User
+                                    { Password = us[1], UserName = us[0], IsOnline = true};
+                                    c.User = tempUser;
+                                    cte.Users.Add(tempUser);
 
+                                    try
+                                    {
+                                        cte.SaveChanges();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Debug.Assert(false);
+                                    }
+                                    return "usr-r$" + us[0] + ":" + us[1] + "$true$";
+
+                                default:
+                                    return "usr-r$" + "NaN:NaN" + "$false$";
+                            }
+                    }
+
+                    break;
+
+                case "rm" when serverCommand[1].Equals("this"):
+                    OnCOnDisconnected(c);
+                    c.Close();
+                    return "Disconnecting..";
+                //change password
+                case "changepass":
+                    var user = serverCommand[1].Split(':');
+
+                    foreach (var cteUser in cte.Users)
+                    {
+                        if (!cteUser.UserName.Equals(user[0])) continue;
+                        cteUser.Password = user[1];
                         break;
-
-                    case "rm" when serverCommand[1].Equals("this"):
-                        OnCOnDisconnected(c);
-                        c.Close();
-                        return "Disconnecting..";
-                    //change password
-                    case "changepass":
-                        var user = serverCommand[1].Split(':');
-
-                        foreach (var cteUser in cte.Users)
-                        {
-                            if (!cteUser.UserName.Equals(user[0])) continue;
-                            cteUser.Password = user[1];
-                            break;
-                        }
+                    }
+                    cte.SaveChanges();
+                    return "Received" + serverCommand[1];
+                case "changepfp":
+                    byte[]? pfp = null;
+                    var dir = new DirectoryInfo(ControlsMisc.GetResourcesPath());
+                    FileInfo[] files = dir.GetFiles(serverCommand[1] + ".*");
+                    string f = null;
+                    foreach (var file in files)
+                    {
+                        var s = File.Open(file.FullName, FileMode.Open);
+                        pfp = AccountSettings.ImageToByteArray(Image.FromStream(s));
+                        f = file.FullName;
+                        s.Dispose();
+                    }
+                    if (f != null)
+                        File.Delete(f);
+                    cte.Users.ToList().First(user1 => user1.UserName == serverCommand[1]).ProfilePicture = pfp;
+                    cte.SaveChanges();
+                    return "Done|ExitCode=0";
+                case "reqadmin":
+                    if (codeSent != null) return "mbox$Code Sent is in process";
+                    codeTimer = new Timer(1000 * 60);
+                    codeSent = new Random().Next(1000, 9999);
+                    codeTimer.Elapsed += (_, _) => {
+                        codeTimer.Stop();
+                        codeSent = null;
+                    };
+                    codeTimer.Start();
+                    return "codeSent$" + codeSent;
+                case "veradmin":
+                    if (codeSent == int.Parse(serverCommand[1]))
+                    {
+                        cte.Users.First((user1 => user1.HasAdminPrivileges == false && user1.id == c.User.id))
+                           .HasAdminPrivileges = true;
                         cte.SaveChanges();
-                        return "Received" + serverCommand[1];
-                    case "reqadmin":
-                        if (codeSent != null) return "mbox$Code Sent is in process";
-                        codeTimer = new Timer(1000 * 60);
-                        codeSent = new Random().Next(1000, 9999);
-                        codeTimer.Elapsed += (_, _) => {
+                        if (codeTimer != null && codeTimer.Enabled)
+                        {
                             codeTimer.Stop();
                             codeSent = null;
-                        };
-                        codeTimer.Start();
-                        return "codeSent$" + codeSent;
-                    case "veradmin":
-                        if (codeSent == int.Parse(serverCommand[1]))
-                        {
-                            cte.Users.First((user1 => user1.HasAdminPrivileges == false && user1.id == c.User.id))
-                               .HasAdminPrivileges = true;
-                            cte.SaveChanges();
-                            if (codeTimer != null && codeTimer.Enabled)
-                            {
-                                codeTimer.Stop();
-                                codeSent = null;
-                            }
-
-                            return "mbox$You're an admin now!";
                         }
-                        break;
-                }
+
+                        return "mbox$You're an admin now!";
+                    }
+                    break;
             }
             return c.TimesRec <= 0 ? "Paired Successfully" : "Received";
         }
@@ -329,12 +371,16 @@ namespace Chat_Together
                     tcpClients[clientToRem.ID].GetStream().Close();
                     tcpClients.Remove(clientToRem.ID);
                     for (var i = 0; i < clientListView.Items.Count; i++)
-                    {
-                        var client = clientListView.Items[i].Tag as Client;
+                    { 
+                        if (clientToRem is { User: {}})
+                        {
+                            clientToRem.User.IsOnline = false;
+                        }
                         if (!clientToRem.ID.Equals(clientListView.Items[i].SubItems[1].Text)) continue;
                         clientListView.Items.RemoveAt(i);
                         break;
                     }
+                    cte.SaveChanges();
                 }
                 catch { /*MessageBox.Show("Could not connect to tcp client");*/ }
             });
@@ -354,15 +400,6 @@ namespace Chat_Together
             Application.Run(new SendData(Dependency.ServerDependent));
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            var g = CreateGraphics();
-            g.FillEllipse(new SolidBrush(Color.Blue), new Rectangle(0, 0, Width, Height));
-            //g.DrawLine(new Pen(Color.Red), c.Location.X, c.Location.Y - 10, c.Location.X + c.Width, c.Location.Y - 10);
-            g.Flush(FlushIntention.Sync);
-            g.Dispose();
-        }
-
         private void ChatTogether_Load(object sender, EventArgs e)
         {
 
@@ -373,11 +410,12 @@ namespace Chat_Together
             for (var i = 0; i < clientListView.SelectedItems.Count; i++)
             {
                 var clientToTerminate = clientListView.SelectedItems[i].Tag as Client;
+                if (clientToTerminate is { User: { } }) clientToTerminate.User.IsOnline = false;
+                cte.SaveChanges();
                 tcpClients[clientToTerminate?.ID ?? throw new ArgumentNullException()].Client.Send(Encoding.Default.GetBytes("cls$"));
                 Thread.Sleep(300);
                 for (var ind = 0; ind < clientListView.Items.Count; ind++)
                 {
-                    var client = clientListView.Items[i].Tag as Client;
                     if (!clientToTerminate.ID.Equals(clientListView.Items[i].SubItems[1].Text)) continue;
                     clientListView.Items.RemoveAt(i);
                     break;
