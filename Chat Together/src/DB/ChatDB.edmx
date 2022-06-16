@@ -10,7 +10,7 @@
             <PropertyRef Name="MessageID" />
           </Key>
           <Property Name="MessageID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Message" Type="nvarchar" MaxLength="50" />
+          <Property Name="Message" Type="nvarchar(max)" />
           <Property Name="dateOccured" Type="datetime" />
           <Property Name="UserID" Type="int" />
         </EntityType>
@@ -55,7 +55,7 @@
             <PropertyRef Name="MessageID" />
           </Key>
           <Property Name="MessageID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Message" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="dateOccured" Type="DateTime" Precision="3" />
           <Property Name="UserID" Type="Int32" />
           <NavigationProperty Name="User" Relationship="ChatTogtherModel.UserMessages" FromRole="Message_Record" ToRole="User" />

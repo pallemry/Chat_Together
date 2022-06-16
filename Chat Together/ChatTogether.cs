@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
+using Chat_Together.src.DB;
+
 using Form_Functions;
 
 using Timer = System.Timers.Timer;

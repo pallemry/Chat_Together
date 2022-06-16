@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Chat_Together
+namespace Chat_Together.src.DB
 {
     using System;
     using System.Data.Entity;

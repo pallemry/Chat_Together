@@ -128,25 +128,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChatDB.Context.cs">
+    <Compile Include="src\DB\ChatDB.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ChatDB.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="ChatDB.cs">
+    <Compile Include="src\DB\ChatDB.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ChatDB.tt</DependentUpon>
     </Compile>
-    <Compile Include="ChatDB.Designer.cs">
+    <Compile Include="src\DB\ChatDB.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ChatDB.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="ChatDB1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ChatDB.tt</DependentUpon>
     </Compile>
     <Compile Include="ChatTogether.cs">
       <SubType>Form</SubType>
@@ -157,17 +152,22 @@
     <Compile Include="Client.cs" />
     <Compile Include="Listener.cs" />
     <Compile Include="MessageComparer.cs" />
-    <Compile Include="Message_Record.cs">
+    <Compile Include="src\DB\ChatDB1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ChatDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="src\DB\Message_Record.cs">
       <DependentUpon>ChatDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Responder.cs" />
-    <Compile Include="Responder_req.cs" />
-    <Compile Include="Responder_close.cs" />
-    <Compile Include="Responder_user_settings.cs" />
-    <Compile Include="SpecificResponder.cs" />
-    <Compile Include="User.cs">
+    <Compile Include="src\Responder\Responder.cs" />
+    <Compile Include="src\Responder\Responder_close.cs" />
+    <Compile Include="src\Responder\Responder_req.cs" />
+    <Compile Include="src\Responder\Responder_user_settings.cs" />
+    <Compile Include="src\Responder\SpecificResponder.cs" />
+    <Compile Include="src\DB\User.cs">
       <DependentUpon>ChatDB.tt</DependentUpon>
     </Compile>
     <EmbeddedResource Include="ChatTogether.resx">
@@ -183,12 +183,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EntityDeploy Include="ChatDB.edmx">
+    <EntityDeploy Include="src\DB\ChatDB.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ChatDB.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <None Include="bin\Debug\Chat Together.exe.config" />
-    <None Include="ChatDB.edmx.diagram">
+    <None Include="src\DB\ChatDB.edmx.diagram">
       <DependentUpon>ChatDB.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
@@ -236,12 +236,12 @@
     <Content Include="bin\Debug\Chat Together.pdb" />
     <Content Include="bin\Port.txt" />
     <Content Include="bin\Debug\Resources\UserProfileImages\defaultUser.png" />
-    <Content Include="ChatDB.Context.tt">
+    <Content Include="src\DB\ChatDB.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ChatDB.edmx</DependentUpon>
       <LastGenOutput>ChatDB.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="ChatDB.tt">
+    <Content Include="src\DB\ChatDB.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ChatDB.edmx</DependentUpon>
       <LastGenOutput>ChatDB1.cs</LastGenOutput>

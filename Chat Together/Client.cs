@@ -1,11 +1,15 @@
-﻿using System;
+﻿
+#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Sockets;
 using System.Windows.Forms;
-#nullable enable
+
+using Chat_Together.src.DB;
+
 // test merge.
 namespace Chat_Together
 {

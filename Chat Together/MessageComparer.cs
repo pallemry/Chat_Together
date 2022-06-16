@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Chat_Together.src.DB;
+
+
 namespace Chat_Together
 {
     public class MessageComparer : IComparer<Message_Record>
