@@ -162,6 +162,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Responder.cs" />
+    <Compile Include="Responder_req.cs" />
+    <Compile Include="Responder_close.cs" />
+    <Compile Include="Responder_user_settings.cs" />
+    <Compile Include="SpecificResponder.cs" />
     <Compile Include="User.cs">
       <DependentUpon>ChatDB.tt</DependentUpon>
     </Compile>

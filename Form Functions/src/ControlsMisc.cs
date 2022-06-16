@@ -87,7 +87,8 @@ namespace Form_Functions
             cb.CheckedChanged += (_, _) => tb.UseSystemPasswordChar = !cb.Checked;
         }
 
-        public static string? GetSolutionPath() => "C:\\Chat Together";
+        private static string osUserNames = Environment.UserName;
+        public static string? GetSolutionPath() => $"C:\\Users\\{osUserNames}\\AppData\\Local\\Chat Together";
         public static string? GetResourcesPath() => $"{GetSolutionPath()}\\resources\\UserImageProfiles";
 
     }
