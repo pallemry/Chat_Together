@@ -1,29 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 #nullable enable
 namespace Form_Functions
 {
-    public enum UserConnection
-    {
-        LogIn, SignUp
-    }
-
     public partial class LogIn : Form
     {
-        private UserConnection State { get; set; }
         public event LoggedInEventHandler LoggedIn;
         public bool Running { get; private set; }
-        public LogIn(List<string> userNames, List<string> passwords)
+        public LogIn()
         {
             InitializeComponent();
+            CenterToScreen();
             SignUpGb.Location = logInGb.Location;
+            Running = true;
 
         }
         private void LogIn_Load(object sender, EventArgs e)
         {
-            Running = true;
+            
             label1.InitializeLinkLabel(FontStyle.Underline , label1.Font.Size, Color.RoyalBlue);
             label2.InitializeLinkLabel(FontStyle.Underline , label2.Font.Size, Color.RoyalBlue);
             Password.InitializePlaceHolder("Enter Password..",
@@ -57,6 +52,11 @@ namespace Form_Functions
 
         private void Confirm_Click(object sender, EventArgs e)
         {
+            if (Password.BackColor == Color.Gray)
+            {
+                MessageBox.Show("Must fill password");
+                return;
+            }
             CloseFormWithData(new LoggedInEventArgs(UserName.Text, Password.Text, Closer.ConfirmButton, false));
         }
 
@@ -104,6 +104,11 @@ namespace Form_Functions
 
         private void SingUpButton_Click(object sender, EventArgs e)
         {
+            if (PasswordSU.BackColor == Color.Gray)
+            {
+                MessageBox.Show("Must fill password");
+                return;
+            }
             CloseFormWithData(new LoggedInEventArgs(UserNameSU.Text, PasswordSU.Text, Closer.ConfirmButton, true));
         }
     }

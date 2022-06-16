@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 namespace Form_Functions
@@ -9,6 +11,20 @@ namespace Form_Functions
     public static class ControlsMisc
     {
         public static readonly Dictionary<TextBox, GetDef> IsEmpty = new ();
+
+        public static void InitializePanelResize(this Panel panel, Form owner, Control control, params Control[] controls)
+        {
+            var a = controls.ToList();
+            a.Add(control);
+            foreach (var c in a)
+            {
+                c.Resize += (sender, args) => {
+                    var previousPanelHeight = panel.Height;
+                    panel.Height = c.Location.Y + c.Height;
+                    owner.Height += panel.Height - previousPanelHeight;
+                };
+            }
+        }
 
         /// <summary>Extension for textboxes that enables placeholder text in .NET Framework (4.7.2), unlike .NET Core which has this feature auto-implemented as a property
         /// under the 'Misc' category </summary> 
@@ -22,7 +38,7 @@ namespace Form_Functions
             target.ForeColor = defaultPhForeColor;
             target.BackColor = defaultPhBackColor;
             var placeHolding = true;
-            target.Enter += (sender, args) =>
+            target.Enter += (_, _) =>
             {
                 if (!placeHolding) return;
                 target.Text = string.Empty;
@@ -30,7 +46,7 @@ namespace Form_Functions
                 target.BackColor = defaultBackColor;
                 placeHolding = false;
             };
-            target.Leave += (sender, args) =>
+            target.Leave += (_, _) =>
             {
                 if (!string.IsNullOrEmpty(target.Text.Trim())) return;
                 target.ForeColor = defaultPhForeColor;
@@ -68,10 +84,10 @@ namespace Form_Functions
 
         public static void LinkPasswordWithCheckBox(TextBox tb, CheckBox cb)
         {
-            cb.CheckedChanged += (sender, args) => tb.UseSystemPasswordChar = !cb.Checked;
+            cb.CheckedChanged += (_, _) => tb.UseSystemPasswordChar = !cb.Checked;
         }
 
-        public static string? GetSolutionPath() => Directory.GetParent(Directory.GetCurrentDirectory())?.Parent.Parent.FullName;
+        public static string? GetSolutionPath() => "C:\\Chat Together";
         public static string? GetResourcesPath() => $"{GetSolutionPath()}\\resources\\UserImageProfiles";
 
     }

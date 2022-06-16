@@ -26,6 +26,7 @@ namespace Chat_Together
         public bool HasAdminPrivileges { get; set; }
         public byte[] ProfilePicture { get; set; }
         public bool IsOnline { get; set; }
+        public Nullable<System.DateTime> DateCreated { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Message_Record> Message_Record { get; set; }

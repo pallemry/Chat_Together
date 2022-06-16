@@ -9,10 +9,12 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
 
 using Form_Functions;
+using Form_Functions.src;
 
 using Timer = System.Timers.Timer;
 
@@ -29,18 +31,35 @@ namespace Chat_Together
         private Dictionary<string, TcpClient> tcpClients;
         private Timer t;
         private List<Label> messages= new ();
-        private int? codeSent = null;
+        private int? codeSent;
         
        
         // Constructor
         public ChatTogether()
         {
             InitializeComponent();
+
             
             // Takes care of the last ports, if they were not closed properly.
             File.WriteAllText("..\\Port.txt", "");
 
             cte = new (); // Initialize database
+            if (!Directory.Exists("C:\\Chat Together"))
+            {
+                Directory.CreateDirectory("C:\\Chat Together\\resources\\UserImageProfiles\\def");                                      
+
+                try
+                {
+                    MessageBox.Show(cte.Users.ToList().First().UserName);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
+                using (var m = new MemoryStream(cte.Users.Find(23)!.ProfilePicture))
+                    Image.FromStream(m).Save("C:\\Chat Together\\resources\\UserImageProfiles\\def\\defaultUser.png");
+            } 
+           
             _l = new Listener(9);
             tcpClients = new Dictionary<string, TcpClient>();
             // This timer is responsible for sending the message back to those who got them each 2.2 seconds.
@@ -74,41 +93,43 @@ namespace Chat_Together
             t.Start(); // start the unreadmsg timer
             
             // When a new client is getting connected...
-            _l.SocketAccepted += socket => {
+            _l.SocketAccepted += _ => {
 
             var c = _l.LatestConnected; // set the last connected property to the most recent client connected
             
             // When a new client sends back a message.
-            c.Received += (sender, data) =>
+            c.Received += (_, data) =>
             {
                 var dataRec = Encoding.Default.GetString(data); // the data the client sent to the sever
                 var dateRec = DateTime.Now; // the date-time the data has been sent
-                var responseBasedOnData = GetResponseBasedOnData(dataRec, c); // the respone th sever should respond
+                var responseBasedOnData = GetResponseBasedOnData(dataRec, c); // the response the sever should respond
                 var b = Encoding.Default.GetBytes(responseBasedOnData);
                 var checkedIDs = new List<string>();
-                Message_Record record = null; //The data represnted as a message record in the database
+                Message_Record record = null; //The data represented as a message record in the database
                 
                 //Send the message to all other connected clients
                 if (responseBasedOnData.Equals("Received"))
                 {
-                    foreach (var client in _l.ConnectedClients.Where(client => c.ID != client.ID && 
-                                                                               !checkedIDs.Contains(client.ID)))
+                    if (c.User != null)
                     {
-                        if (c.User == null) break;
-                        //init mesage rec
-                        record = new Message_Record
-                        { 
-                        Message = dataRec, 
-                        dateOccured = dateRec,
-                        UserID = c.User.id,
-                        User = c.User
-                        };
-                        client.UnreadMessages.Enqueue(record);
-                        checkedIDs.Add(client.ID);
+                        foreach (var client in _l.ConnectedClients.Where(client => c.ID != client.ID && 
+                                                                             !checkedIDs.Contains(client.ID)))
+                        {
+                            //init message rec
+                            record = new Message_Record
+                            { 
+                            Message = dataRec, 
+                            dateOccured = dateRec,
+                            UserID = c.User.id,
+                            User = c.User
+                            };
+                            client.UnreadMessages.Enqueue(record);
+                            checkedIDs.Add(client.ID);
+                        }
                     }
                 }
 
-                Thread.Sleep(1000);
+                //Thread.Sleep(1000);
                 
                 //If its the first time the user sends a message add the client to a list of tcpClients so we could keep track of him
                 if (c.TimesRec <= 0)
@@ -165,7 +186,6 @@ namespace Chat_Together
                     for (var i = 0; i < clientListView.Items.Count; i++)
                     {
                         if (!c.ID.Equals(clientListView.Items[i].SubItems[1].Text)) continue;
-                        
                         cte.Message_Records.Add(record);
                         clientListView.Items[i].SubItems[2].Text = dataRec;
                         clientListView.Items[i].SubItems[3].Text = dateRec.ToString(CultureInfo.DefaultThreadCurrentCulture);
@@ -178,6 +198,34 @@ namespace Chat_Together
                         {
                             if (tcpClients.ContainsKey(c.ID) || tcpClients[c.ID].Client.Connected) return;
                             tcpClients[c.ID].Client.Send(Encoding.Default.GetBytes("Failed to load on database"));
+                        }
+                        try
+                        {
+                            if (tcpClients.ContainsKey(c.ID))
+                            {
+                                if (tcpClients[c.ID].Connected)
+                                {
+                                    var latestMessageId = cte.Message_Records.ToList().Last().MessageID;
+                                    var msgIdBuffer = Encoding.Default.GetBytes("latest.msg.id$" + 
+                                                                                latestMessageId + "$");
+
+                                    foreach (var tcpClient in tcpClients)
+                                    {
+                                        tcpClient.Value.GetStream().Write(msgIdBuffer, 0, msgIdBuffer.Length);
+                                        tcpClient.Value.GetStream().Flush();
+                                    }                                    
+
+                                }
+                                else
+                                {
+                                    MessageBox.Show($"Client: \nID:{c.ID}\nIPv4:{c.ep.Address} Port:{c.ep.Port} " +
+                                                    "not connected when it should have been");
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            e.HelpLink = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
                         }
                         break;
                     }
@@ -211,7 +259,15 @@ namespace Chat_Together
                         clientListView.Items.RemoveAt(i);
                         break;
                     }
-                    cte.SaveChanges();
+
+                    try
+                    {
+                        cte.SaveChanges();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
                 });
             }
             c.Disconnected += OnCOnDisconnected; }; 
@@ -233,9 +289,19 @@ namespace Chat_Together
                     {
                         case "id":
                             return c.ID;
-
+                        case "msginfo":
+                            var msgIdToFind = int.Parse(serverCommand[2]);
+                            var msgFoundIndex = cte.Message_Records.ToList().BinarySearch(new Message_Record{MessageID = msgIdToFind}, 
+                             new MessageComparer());
+                            if (msgFoundIndex < 0)
+                                return "msg.not.found$" + msgIdToFind;
+                            var msgFound = cte.Message_Records.ToArray()[msgFoundIndex];
+                            return "msg.info$" + JsonSerializer.Serialize(new MessageInformationArgs(msgFound.Message,
+                                                                 msgFound.dateOccured, 
+                                                                 msgFound.User.UserName,
+                                                                 msgFound.User.HasAdminPrivileges,
+                                                                 msgFound.User.DateCreated)) + "$";
                         case "idmsg":
-                            //return cte.Message_Records.ToList().Last().MessageRec.ToString();
                             return "not connected yet";
                         case "usr":
                             return "usr" + cte.Users.ToList()
@@ -279,7 +345,7 @@ namespace Chat_Together
 
                                 case "1" when cte.Users.ToList().All(newAccountAttempt):
                                     var tempUser = new User
-                                    { Password = us[1], UserName = us[0], IsOnline = true};
+                                    { Password = us[1], UserName = us[0], IsOnline = true, DateCreated = DateTime.Now};
                                     c.User = tempUser;
                                     cte.Users.Add(tempUser);
 
@@ -305,6 +371,12 @@ namespace Chat_Together
                     c.Close();
                     return "Disconnecting..";
                 //change password
+                case "del":
+                    OnCOnDisconnected(c);
+                    if (c is { User: { } }) cte.Users.Remove(c.User);
+                    cte.SaveChanges();
+                    c.Close();
+                    return "Disconnecting & Deleting";
                 case "changepass":
                     var user = serverCommand[1].Split(':');
 
@@ -397,7 +469,8 @@ namespace Chat_Together
         }
         private static void Start()
         {
-            Application.Run(new SendData(Dependency.ServerDependent));
+            if (!SendData.InstanceBeingCreated)
+                Application.Run(new SendData());
         }
 
         private void ChatTogether_Load(object sender, EventArgs e)

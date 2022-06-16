@@ -39,6 +39,7 @@ namespace Form_Functions
             this.ChangeImageByFileLbl = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.DeleteProfilePictureLbl = new System.Windows.Forms.Label();
+            this.DeleteAccountLbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.UserPicutreBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -146,11 +147,23 @@ namespace Form_Functions
             this.DeleteProfilePictureLbl.Text = "Delete Profile Picture";
             this.DeleteProfilePictureLbl.Click += new System.EventHandler(this.DeleteProfilePictureLbl_Click);
             // 
+            // DeleteAccountLbl
+            // 
+            this.DeleteAccountLbl.AutoSize = true;
+            this.DeleteAccountLbl.Font = new System.Drawing.Font("Gadugi", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DeleteAccountLbl.Location = new System.Drawing.Point(480, 422);
+            this.DeleteAccountLbl.Name = "DeleteAccountLbl";
+            this.DeleteAccountLbl.Size = new System.Drawing.Size(113, 19);
+            this.DeleteAccountLbl.TabIndex = 10;
+            this.DeleteAccountLbl.Text = "Delete Account";
+            this.DeleteAccountLbl.Click += new System.EventHandler(this.DeleteAccountLbl_Click);
+            // 
             // AccountSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(605, 450);
+            this.Controls.Add(this.DeleteAccountLbl);
             this.Controls.Add(this.DeleteProfilePictureLbl);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.ChangeImageByFileLbl);
@@ -181,5 +194,6 @@ namespace Form_Functions
         private System.Windows.Forms.Label ChangeImageByFileLbl;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label DeleteProfilePictureLbl;
+        private System.Windows.Forms.Label DeleteAccountLbl;
     }
 }

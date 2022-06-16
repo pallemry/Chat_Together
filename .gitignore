@@ -10,3 +10,7 @@
 *.suo
 *.user
 _ReSharper.*
+/TestSocketTests
+/packages/Microsoft.Bcl.AsyncInterfaces.6.0.0
+/packages/MSTest.TestAdapter.2.2.7
+/packages

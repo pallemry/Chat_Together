@@ -40,7 +40,6 @@ namespace Form_Functions
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Name = "ChatLog";
             this.Size = new System.Drawing.Size(589, 261);
-            this.Scroll += new System.Windows.Forms.ScrollEventHandler(this.ChatLog_Scroll);
             this.ResumeLayout(false);
 
         }

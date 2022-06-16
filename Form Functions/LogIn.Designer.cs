@@ -195,7 +195,7 @@ namespace Form_Functions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(231, 201);
+            this.ClientSize = new System.Drawing.Size(235, 201);
             this.Controls.Add(this.SignUpGb);
             this.Controls.Add(this.logInGb);
             this.Name = "LogIn";

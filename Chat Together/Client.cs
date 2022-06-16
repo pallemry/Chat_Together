@@ -61,7 +61,7 @@ namespace Chat_Together
             Socket.Dispose();
         }
 
-        public int TimesRec { get; private set; } = 0;
+        public int TimesRec { get; private set; }
 
         public event ClientReceivedHandler Received;
         public event ClientDisconnectedHandler Disconnected;

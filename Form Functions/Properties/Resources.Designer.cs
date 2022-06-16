@@ -19,7 +19,7 @@ namespace Form_Functions.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -76,6 +76,16 @@ namespace Form_Functions.Properties {
         internal static System.Drawing.Bitmap _3840x2160_lake_dark_night_starry_sky_landscape1 {
             get {
                 object obj = ResourceManager.GetObject("3840x2160_lake-dark-night-starry-sky-landscape1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Dots_vertical_more_setting_user_interface_web_app_512 {
+            get {
+                object obj = ResourceManager.GetObject("Dots_vertical_more_setting_user_interface_web_app-512", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

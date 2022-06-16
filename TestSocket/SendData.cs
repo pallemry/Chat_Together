@@ -9,11 +9,13 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Form_Functions;
+using Form_Functions.src;
 
 using TestSocket;
 using TestSocket.Properties;
@@ -32,35 +34,89 @@ namespace Chat_Together
     
     public partial class SendData : Form
     {
-        #region Propeties
+        #region Static Variables
 
-        private List<string> _userNames = new(), _passwords = new ();
-        private bool _running;
+        private static Dictionary<string, Image?> _profileImages = new();
+
+        #endregion
+
+        #region Propeties / Fields
+
+        // Server-Connection-related variables
         private readonly Socket _s;
         private TcpClient? _rec;
         private readonly TcpListener _tcpListener;
         private static int _ipHeader;
         private readonly int _port = 1;
-        private Dependency Dependency { get; set; }
-        private volatile LoadingWindow? _loading;
-        public Guid? _id = null;
+        public Guid? _id;
+
+        // User-Information-related variables
+        private List<string> _userNames = new(), _passwords = new ();
+        private volatile User? _currentUser;
+        private Image? ProfileImage { get; set; }
+        private bool? _isUserValid;
+
+        // Configurations
         public int _defaultMessageWidth = 1000;
 
-        
+        //Other back-end related variables that are used for validation, threading, timing, one-time uses, etc.
+        private volatile MessageInformationArgs? _currentMessageInformation = null;
+        private volatile bool _currentMessageHandled = false;
+        private volatile Thread _loadingRunner;
+        private volatile LoadingWindow? _loading;
+        private Timer? _tmr = new(1000);
+        private Thread? _t;
+        private Thread? _messageInformationThread = null;
+        private volatile LogIn? logIn;
+        private volatile LogIn.LoggedInEventArgs? _logInArgs;
+        private int? codeRec;
+        private bool _running;
+        public static bool InstanceBeingCreated { get; private set; }
+
         #endregion
 
 
         #region Constructor
 
-        private volatile Thread _loadingRunner;
-        public SendData(Dependency d)
+        
+
+        public SendData()
         {
+            InstanceBeingCreated = true;
             _loadingRunner = new Thread(Start);
             _loadingRunner.Name = "Loading Runner";
             _loadingRunner.TrySetApartmentState(ApartmentState.STA);
             _loadingRunner.Start();
-            Dependency = d;
             InitializeComponent();
+            chatLog.MessageInformationClicked +=  async (o, args) => {
+                _currentMessageInformation = null;
+                _currentMessageHandled = false;
+                var messageObject = (ChatMessage)o;
+                if (messageObject.IsSystemMessage) return;
+
+                _s?.Send(Default.GetBytes("req$msginfo$" + messageObject.ID + "$"));
+
+                while (!_currentMessageHandled)
+                {
+                    await Task.Delay(250);
+                }
+
+                if (_currentMessageInformation == null)
+                {
+                    _currentMessageHandled = false;
+                    return;
+                }
+                if (_messageInformationThread == null)
+                {
+                    _messageInformationThread = new Thread(() => {
+                        Application.Run(new MessageInformation(_currentMessageInformation));     
+                    });
+                }
+                else return;
+                _messageInformationThread.Start();
+                _messageInformationThread.Join();
+                _messageInformationThread = null;
+            };
             Enabled = false;
             var r = new Random();
 
@@ -74,24 +130,21 @@ namespace Chat_Together
             File.WriteAllText("..\\Port.txt", s);
             _tcpListener = new TcpListener(IPAddress.Parse($"127.0.0.{_ipHeader}"), _ipHeader);
             _s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            InstanceBeingCreated = false;
         }
 
         private void Start()
         {
             _loading = new LoadingWindow(this);
-            //Thread.Sleep(100);
             Application.Run(_loading);
         }
 
         #endregion
 
-        
-
-
         private void sendButton_Click(object sender, EventArgs e)
         {
-            chatLog1.AddMessage(textBox1.Text, _currentUser?.Name,
-                                ProfileImage ?? AccountSettings._defaultUserProfileImage,
+            chatLog.AddMessage(textBox1.Text, _currentUser?.Name,
+                                ProfileImage ?? AccountSettings.DefaultUserProfileImage,
                                 _defaultMessageWidth);
             if (!_s.Connected) return;
             var msg = textBox1.Text;
@@ -100,9 +153,6 @@ namespace Chat_Together
             textBox1.Text = @"";
         }
         
-        private Image? ProfileImage { get; set; }
-
-        private Timer? _tmr = new (1000);
         private void SendData_Load(object sender, EventArgs e)
         {
             closeButton.BringToFront();
@@ -114,7 +164,7 @@ namespace Chat_Together
 
             if (_tmr != null)
             {
-                _tmr.Elapsed += (o, args) => {
+                _tmr.Elapsed += (_, _) => {
                     Thread.Sleep(200);
                     if (!_s.Connected || !_running) return;
                     var size = _s.Send(Default.GetBytes(_port.ToString()));
@@ -143,16 +193,14 @@ namespace Chat_Together
             _t.Start();
         }
 
-        private Thread? _t;
-
         private void GetDataFromServer()
         {
             try { _rec = _tcpListener.AcceptTcpClient(); }
             catch { return; }
             _ipHeader++;
              Invoke((MethodInvoker) delegate{ 
-                chatLog1.AddMessage("Successfully connected with the main server", "Server",
-                                    Resources.download_removebg_preview, _defaultMessageWidth);
+                chatLog.AddMessage("Successfully connected with the main server", "Server",
+                                    Resources.download_removebg_preview, _defaultMessageWidth, true);
                 Enabled = true;
                 Invoke((MethodInvoker)delegate {
                     _loading?.Close();
@@ -186,23 +234,23 @@ namespace Chat_Together
             }
         }
 
-        private static Dictionary<string, Image?> _profileImages = new ();
-        private volatile LogIn? logIn = null;
         protected virtual void StartLogInProcess()
         {
+            
             Task.Run(() => {
                 Invoke((MethodInvoker) delegate { Enabled = true; });
                 while (_running)
                 {
-                    logIn = new LogIn(_userNames, _passwords);
-                    logIn.LoggedIn += (_, args) => _liArgs = args;
+                    logIn = new LogIn();
+                    logIn.LoggedIn += (_, args) => _logInArgs = args;
                     Application.Run(logIn);
 
-                    if (_liArgs != null)
+                    if (_logInArgs != null)
                     {
-                        if (_liArgs.Closer is Closer.User || _liArgs.Closer is Closer.CancelButton && _currentUser != null) continue;
-                        _s.Send(Default.GetBytes("req$usr-v$" + _liArgs.UserName + ":" +
-                                                 _liArgs.Password + "$" + (_liArgs.NewAccount ? "1" : "0")));
+                        if (_logInArgs.Closer is Closer.User ||
+                            _logInArgs.Closer is Closer.CancelButton && _currentUser != null) continue;
+                        _s.Send(Default.GetBytes("req$usr-v$" + _logInArgs.UserName + ":" +
+                                                 _logInArgs.Password + "$" + (_logInArgs.NewAccount ? "1" : "0")));
 
                         while (_isUserValid == null) ;
                         Thread.Sleep(50);
@@ -235,10 +283,6 @@ namespace Chat_Together
             });
         }
 
-        private volatile User? _currentUser = null;
-        private bool? _isUserValid = null;
-        private volatile LogIn.LoggedInEventArgs? _liArgs = null;
-
         private void ProcessServerResult(string? bb)
         {
             if (bb is null or "") 
@@ -257,6 +301,29 @@ namespace Chat_Together
 
             switch (res[0])
             {
+                case "latest.msg.id":
+                    var id = int.Parse(res[1]);
+                    if (chatLog._messageRecs.Last().ID == null)
+                    {
+                        
+                        chatLog._messageRecs.Last().ID = id;
+                    }
+                    else
+                    {
+                        Task.Run(async () => {
+                            await TaskEx.WaitUntil(() => chatLog._messageRecs.Last().ID == null);
+                            chatLog._messageRecs.Last().ID = id;
+                        });
+
+                    }
+                    break;
+                case "msg.info":
+                    _currentMessageInformation = JsonSerializer.Deserialize<MessageInformationArgs>(res[1]);
+                    _currentMessageHandled = true;
+                    break;
+                case "msg.not.found":
+                    _currentMessageHandled = true;
+                    break;
                 case "mbox":
                     MessageBox.Show(res[1]);
                     break;
@@ -275,7 +342,7 @@ namespace Chat_Together
                                     $"User: {_currentUser?.Name}\nPassword: {_currentUser?.Password} is requesting admin privileges " +
                                     $"\nVerification code: \n\n{codeRec}\n\nNOTE: This code will expire in 1 minute and won't be valid after that duration.");
                     Task.Run(() => Application.Run(input_code));
-                    input_code.ClosedINBox += (o, args) => {
+                    input_code.ClosedINBox += (_, args) => {
                         var codeString = args.Inputs[0];
 
                         if (string.IsNullOrEmpty(codeString) || !int.TryParse(codeString, out var g))
@@ -331,12 +398,12 @@ namespace Chat_Together
                         _isUserValid = false;
                     break;
                 case "unreadmsg":
-                    chatLog1.AddMessage(res[2], res[1], _profileImages[res[1]] ?? AccountSettings._defaultUserProfileImage, _defaultMessageWidth);
+                    chatLog.AddMessage(res[2], res[1], _profileImages[res[1]] ?? AccountSettings.DefaultUserProfileImage, _defaultMessageWidth);
                     return;
 
             }
             if (bb.StartsWith("show"))
-                chatLog1.AddMessage(bb, "System", Resources.download_removebg_preview, _defaultMessageWidth);
+                chatLog.AddMessage(bb, "System", Resources.download_removebg_preview, _defaultMessageWidth, true);
         }
 
 
@@ -353,19 +420,29 @@ namespace Chat_Together
                                      Default);
             s = s.Replace(_port.ToString(), "");
             File.WriteAllText("..\\Port.txt", s);
-            if (closeReason == CloseReason.UserClosing && _s.Connected)
-                _s.Send(Default.GetBytes("rm$this"));
-            Invoke((MethodInvoker) delegate {if (logIn?.Running ?? false) logIn.Close();});
+            
+            //Close the connection if it is open
+            try {
+                if (closeReason == CloseReason.UserClosing && _s.Connected)
+                    _s.Send(Default.GetBytes("rm$this"));
+            }
+            catch {
+                //ignored
+            }
             try { _rec?.Close(); _s?.Close(); _tcpListener?.Server.Close(); }
             catch { /* ignored */ }
-            Close();
+            Invoke((MethodInvoker)delegate { 
+                if (logIn?.Running ?? false) 
+                    logIn.Close();
+                Close();
+            });
         }
 
         #endregion
 
         private void chatLog1_Load(object sender, EventArgs e)
         {
-            Scroll += (o, args) => { };
+            Scroll += (_, _) => { };
         }
 
         private void changeBgImageToolStripMenuItem_Click(object sender, EventArgs e)
@@ -374,7 +451,7 @@ namespace Chat_Together
             op.Multiselect = false;
             op.Filter = "*Image Files (*.png, *.jpg, *.bmp, *.gif, *.jpeg)|*.png;*.jpg;*.bmp;*.gif;*.jpeg";
             if (op.ShowDialog() == DialogResult.OK)
-                chatLog1.BackgroundImage = Image.FromStream(op.OpenFile());
+                chatLog.BackgroundImage = Image.FromStream(op.OpenFile());
         }
 
         private void accountSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -383,7 +460,7 @@ namespace Chat_Together
             Task.Run(() => {
                 if (_currentUser == null) return;
                 var accountSettings = new AccountSettings(_currentUser.Name, _currentUser.Password, ProfileImage);
-                accountSettings.PasswordChanged += (sender, userName, password) => {
+                accountSettings.PasswordChanged += (_, userName, password) => {
                     _s.Send(Default.GetBytes("changepass$" + userName + ":" + password));
                     _currentUser.Password = password;
                     _currentUser.Name = userName;
@@ -391,18 +468,26 @@ namespace Chat_Together
                     accountSettings.Password = password;
 
                 };
-                accountSettings.ProfilePictureChanged += (o, args) => { 
+                accountSettings.ProfilePictureChanged += (_, args) => { 
                     var commandBuffer = Default.GetBytes("changepfp$" + args.UserName + "$");
                     _s.Send(commandBuffer);
                     _profileImages[args.UserName] = args.NewProfileImage;
                     ProfileImage = args.NewProfileImage ;
                 };
+
+                accountSettings.AccountDeleteAttempt += (o, args) => {
+                    _s.Send(Default.GetBytes("del$"));
+                    EndOperation(CloseReason.ApplicationExitCall);
+                    accountSettings.Close();
+                };
                 Application.Run(accountSettings);
+
+                
 
             });
         }
 
-        private int? codeRec;
+        
         private void changeAdminPrivilegesToolStripMenuItem_Click(object sender, EventArgs e)
         {
            

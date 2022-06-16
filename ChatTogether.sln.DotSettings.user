@@ -1,4 +1,15 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\yisha\source\repos\ChatTogether\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll" /&gt;&#xD;
-&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
+&lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=27f31471_002Dc271_002D485a_002D8280_002D2584ba762698/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="MessageInformationTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Not&gt;&#xD;
+    &lt;And&gt;&#xD;
+      &lt;TestAncestor&gt;&#xD;
+        &lt;TestId&gt;MSTest::A5BD4EE0-DCD8-435D-ACFF-B25A891CD809::.NETFramework,Version=v4.7.2::Form_Functions.Tests.MessageInformationTests.MessageInformationTest&lt;/TestId&gt;&#xD;
+      &lt;/TestAncestor&gt;&#xD;
+      &lt;Project Location="C:\Users\yisha\source\repos\Chat_Together\Form FunctionsTests" Presentation="&amp;lt;Form FunctionsTests&amp;gt;" /&gt;&#xD;
+      &lt;Namespace&gt;Form_Functions.Tests&lt;/Namespace&gt;&#xD;
+    &lt;/And&gt;&#xD;
+  &lt;/Not&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

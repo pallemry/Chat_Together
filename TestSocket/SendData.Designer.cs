@@ -43,7 +43,7 @@ namespace Chat_Together
             this.accountStatsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeAdminPrivilegesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.chatLog1 = new Form_Functions.ChatLog();
+            this.chatLog = new Form_Functions.ChatLog();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -160,21 +160,21 @@ namespace Chat_Together
             this.panel1.Size = new System.Drawing.Size(1920, 112);
             this.panel1.TabIndex = 8;
             // 
-            // chatLog1
+            // chatLog
             // 
-            this.chatLog1.AutoScroll = true;
-            this.chatLog1.BackColor = System.Drawing.Color.Teal;
-            this.chatLog1.BackgroundImage = global::TestSocket.Properties.Resources._3840x2160_lake_dark_night_starry_sky_landscape;
-            this.chatLog1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.chatLog1.DefaultGap = 20;
-            this.chatLog1.DefaultX = 30;
-            this.chatLog1.DefaultY = 30;
-            this.chatLog1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chatLog1.Location = new System.Drawing.Point(0, 24);
-            this.chatLog1.Name = "chatLog1";
-            this.chatLog1.Size = new System.Drawing.Size(1920, 890);
-            this.chatLog1.TabIndex = 5;
-            this.chatLog1.Load += new System.EventHandler(this.chatLog1_Load);
+            this.chatLog.AutoScroll = true;
+            this.chatLog.BackColor = System.Drawing.Color.Teal;
+            this.chatLog.BackgroundImage = global::TestSocket.Properties.Resources._3840x2160_lake_dark_night_starry_sky_landscape;
+            this.chatLog.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.chatLog.DefaultGap = 20;
+            this.chatLog.DefaultX = 30;
+            this.chatLog.DefaultY = 30;
+            this.chatLog.Dock = System.Windows.Forms.DockStyle.Top;
+            this.chatLog.Location = new System.Drawing.Point(0, 24);
+            this.chatLog.Name = "chatLog";
+            this.chatLog.Size = new System.Drawing.Size(1920, 890);
+            this.chatLog.TabIndex = 5;
+            this.chatLog.Load += new System.EventHandler(this.chatLog1_Load);
             // 
             // SendData
             // 
@@ -182,7 +182,7 @@ namespace Chat_Together
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1920, 1026);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.chatLog1);
+            this.Controls.Add(this.chatLog);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "SendData";
@@ -202,7 +202,7 @@ namespace Chat_Together
         private System.Windows.Forms.Button sendButton;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.ImageList userIcons;
-        private Form_Functions.ChatLog chatLog1;
+        private Form_Functions.ChatLog chatLog;
         private System.Windows.Forms.RichTextBox textBox1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;

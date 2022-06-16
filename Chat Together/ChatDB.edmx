@@ -19,11 +19,12 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="UserName" Type="nvarchar" MaxLength="50" />
-          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="HasAdminPrivileges" Type="bit" Nullable="false" />
           <Property Name="ProfilePicture" Type="image" />
           <Property Name="IsOnline" Type="bit" Nullable="false" />
+          <Property Name="DateCreated" Type="date" />
         </EntityType>
         <Association Name="UserMessages">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -64,12 +65,13 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Message_Record" Relationship="Self.UserMessages" FromRole="User" ToRole="Message_Record" />
           <Property Name="HasAdminPrivileges" Type="Boolean" Nullable="false" />
           <Property Name="ProfilePicture" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="IsOnline" Type="Boolean" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="0" />
         </EntityType>
         <Association Name="UserMessages">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -110,6 +112,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="ChatTogtherModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
                 <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
                 <ScalarProperty Name="HasAdminPrivileges" ColumnName="HasAdminPrivileges" />
