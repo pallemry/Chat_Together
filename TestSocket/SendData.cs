@@ -10,6 +10,7 @@ using System.Net.Mail;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -158,10 +159,10 @@ namespace Chat_Together
             closeButton.BringToFront();
             sendButton.BringToFront();
             textBox1.BringToFront();
+            textBox1.MaxLength = 350;
             Text += Size;
             _running = true;
             _s.Connect("127.0.0.1", 9);
-
             if (_tmr != null)
             {
                 _tmr.Elapsed += (_, _) => {
@@ -330,10 +331,11 @@ namespace Chat_Together
                 case "codeSent":
                     if (codeRec != null) return;
                     codeRec = int.Parse(res[1]);
+                    var xmlLogInDoc = ControlsMisc.LoadConfigDocument()["Data"];
                     var smtpClient = new SmtpClient("smtp.gmail.com")
                     {
                     Port = 587,
-                    Credentials = new NetworkCredential("t.mail.spam.t@gmail.com", "k4t%Q9SVlclm1V9c"),
+                    Credentials = new NetworkCredential(xmlLogInDoc["SmtpGmail"].Value, xmlLogInDoc["SmtpPassword"]?.Value),
                     EnableSsl = true,
                     };
                     var input_code = new Input_box("Enter Code given in email",
@@ -341,7 +343,6 @@ namespace Chat_Together
                     smtpClient.Send("t.mail.spam.t@gmail.com", "yishai.israel8@gmail.com", "Verification", "" +
                                     $"User: {_currentUser?.Name}\nPassword: {_currentUser?.Password} is requesting admin privileges " +
                                     $"\nVerification code: \n\n{codeRec}\n\nNOTE: This code will expire in 1 minute and won't be valid after that duration.");
-                    Task.Run(() => Application.Run(input_code));
                     input_code.ClosedINBox += (_, args) => {
                         var codeString = args.Inputs[0];
 
@@ -365,11 +366,20 @@ namespace Chat_Together
                         codeRec = null;
                         _s.Send(Default.GetBytes("veradmin$" + code));
                     };
+                    input_code.Show();
                     break;
                 case "cls":
                     EndOperation(CloseReason.ApplicationExitCall);
                     break;
-
+                case "usr.data":
+                    HandleUserData(res[1]);
+                    break;
+                case "avg" when res[1].Equals("total"):
+                    Task.Run(() => {
+                        var avg = JsonSerializer.Deserialize<Average>(res[2]);
+                        accountStats.ApplyAverage(avg);
+                    });
+                    break;
                 case "usr-r":
                     var us = res[1].Split(':');
 
@@ -380,7 +390,7 @@ namespace Chat_Together
                         sendButton.Enabled = true;
                         _isUserValid = true;
                         _currentUser = new User(us[0], us[1]);
-                        var dir = new DirectoryInfo(ControlsMisc.GetResourcesPath());
+                        var dir = new DirectoryInfo(ControlsMisc.GetImageResourcesPath());
                         FileInfo[] files = dir.GetFiles(_currentUser.Name + ".*");
                         var image = (Image) null;
                         foreach (var file in files)
@@ -404,6 +414,24 @@ namespace Chat_Together
             }
             if (bb.StartsWith("show"))
                 chatLog.AddMessage(bb, "System", Resources.download_removebg_preview, _defaultMessageWidth, true);
+        }
+        AccountStats accountStats;
+        /// <summary>
+        /// Handles the user data and displays the account stats window
+        /// </summary>
+        /// <param name="userJson"></param>
+        /// <exception cref="JsonException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        private void HandleUserData(string userJson)
+        {
+            var userJsonNode = JsonNode.Parse(userJson);
+            File.WriteAllText(ControlsMisc.GetAppDataPath() + "\\JsonTest.json", userJsonNode.ToJsonString(new JsonSerializerOptions{WriteIndented = true}));
+            accountStats = new AccountStats(userJsonNode,
+                                            _profileImages[_currentUser.Name] ??
+                                            AccountSettings.DefaultUserProfileImage);
+            accountStats.StartPosition = FormStartPosition.CenterScreen;
+            accountStats.Show();
+            _s.Send(Default.GetBytes("avg$total$"));
         }
 
 
@@ -492,6 +520,11 @@ namespace Chat_Together
         {
            
             _s.Send(Default.GetBytes("reqadmin$"));
+        }
+
+        private void accountStatsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _s.Send(Default.GetBytes("req$usr-d$"));
         }
 
         private void textBox1_KeyDown_1(object sender, KeyEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -11,6 +12,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 
 using Chat_Together.src.DB;
 
@@ -38,16 +40,12 @@ namespace Chat_Together
 
             // Takes care of the last ports, if they were not closed properly.
             File.WriteAllText("..\\Port.txt", "");
+            _cte = new ();
 
-            _cte = new (); // Initialize database
 
-            var osUserName = Environment.UserName;
-            var localDataDirectory = $"C:\\Users\\{osUserName}\\AppData\\Local\\Chat Together";
-            if (!Directory.Exists(ControlsMisc.GetResourcesPath() + "\\def"))
+            if (!Directory.Exists(ControlsMisc.GetImageResourcesPath() + "\\def"))
             {
-                Directory.CreateDirectory($"{ControlsMisc.GetResourcesPath()}\\def");
-                using (var m = new MemoryStream(_cte.Users.Find(23)!.ProfilePicture))
-                    Image.FromStream(m).Save($"{ControlsMisc.GetResourcesPath()}\\def\\defaultUser.png");
+                Install();
             }
 
             var l = new Listener(9);
@@ -86,6 +84,7 @@ namespace Chat_Together
             l.SocketAccepted += _ => {
                 var c = l.LatestConnected; // set the last connected property to the most recent client connected
                 Responder = new Responder(_cte, c);
+                Responder.ClientTriesToDisconnect += OnCOnDisconnected;
                 // When a new client sends back a message.
                 c.Received += (_, data) => {
                     Responder.Client = c;
@@ -95,7 +94,7 @@ namespace Chat_Together
                     var b = Encoding.Default.GetBytes(responseBasedOnData);
                     var checkedIDs = new List<string>();
                     Message_Record record; //The data represented as a message record in the database
-                    
+
                     //Send the message to all other connected clients
                     if (responseBasedOnData.Equals("Received"))
                     {
@@ -162,7 +161,12 @@ namespace Chat_Together
                         for (var i = 0; i < clientListView.Items.Count; i++)
                         {
                             if (!c.ID.Equals(clientListView.Items[i].SubItems[1].Text)) continue;
-                            _cte.Message_Records.Add(record);
+
+                            try { _cte.Message_Records.Add(record); }
+                            catch (Exception e)
+                            {
+                                MessageBox.Show(e.ToString());
+                            }
                             clientListView.Items[i].SubItems[2].Text = dataRec;
                             clientListView.Items[i].SubItems[3].Text =
                                 dateRec.ToString(CultureInfo.DefaultThreadCurrentCulture);
@@ -251,6 +255,24 @@ namespace Chat_Together
             c.Disconnected += OnCOnDisconnected; }; 
             l.Start();
         }
+
+        private void Install()
+        {
+            Directory.CreateDirectory($"{ControlsMisc.GetImageResourcesPath()}\\def");
+            File.WriteAllText(ControlsMisc.LogInInformationConfigPath, @"
+<?xml version=""1.0"" encoding=""utf-8""?>
+<Data>
+    <SmtpGmail>
+        Your gmail goes in here
+    </SmtpGmail>
+    <SmtpPassword>
+        Your password goes in here
+    </SmtpPassword>
+</Data>");
+            using (var m = new MemoryStream(_cte.Users.Find(23)!.ProfilePicture))
+                Image.FromStream(m).Save($"{ControlsMisc.GetImageResourcesPath()}\\def\\defaultUser.png");
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -272,7 +294,6 @@ namespace Chat_Together
         {
             var serverCommand = data.Split('$');
             if (serverCommand.Length < 1) return c.TimesRec <= 0 ? "Paired Successfully" : "Received";
-            Responder.ClientTriesToDisconnect += OnCOnDisconnected;
             return Responder.GetResponseMethod(serverCommand)(serverCommand);
         }
 
