@@ -156,7 +156,7 @@ namespace Chat_Together
                     //Saves the message in the database.
                     Invoke((MethodInvoker)(() => {
                         if (c.User == null || !responseBasedOnData.Equals("Received")) return;
-                        record = new Message_Record { Message = dataRec, dateOccured = dateRec };
+                        record = new Message_Record { Message = SendData.RemoveUserIndicator(dataRec), dateOccured = dateRec, UserID = c.User.id };
                         for (var i = 0; i < clientListView.Items.Count; i++)
                         {
                             if (!c.ID.Equals(clientListView.Items[i].SubItems[1].Text)) continue;

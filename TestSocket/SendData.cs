@@ -415,7 +415,7 @@ namespace TestSocket
                 chatLog.AddMessage(bb, "System", Resources.download_removebg_preview, DefaultMessageWidth, true);
         }
 
-        private static string RemoveUserIndicator(string msg) => 
+        public static string RemoveUserIndicator(string msg) => 
             msg.StartsWith(UserTableLiterals.UserSentIndicator) ? msg.Remove(0, UserTableLiterals.UserSentIndicator.Length) : msg;
         private bool ProfilePictureExists(string userName) => ProfileImages.ContainsKey(userName);
 
