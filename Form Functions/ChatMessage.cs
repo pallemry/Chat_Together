@@ -3,16 +3,16 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-
-namespace Chat_Together
+#nullable enable
+namespace Form_Functions
 {
     public partial class ChatMessage : UserControl
     {
         public string Message { get; }
         public int? ID { get; set; }
-        public event EventHandler InformationClicked;
+        public event EventHandler? InformationClicked;
         private readonly Stopwatch _mouseLeaveStopwatch;
-        public bool IsSystemMessage { get; set; }
+        public bool IsSystemMessage { get; }
         
         public ChatMessage(string message, float width, string? author, bool isSystemMessage = false)
         {
@@ -26,33 +26,33 @@ namespace Chat_Together
             #region Resize message calculator
 
             Width = (int)(width + 67);
-            richTextBox1.Text = message;
-            richTextBox1.Width = (int)width - 15;
-            richTextBox1.ReadOnly = true;
-            richTextBox1.AutoSize = false;
-            foreach (var unused in richTextBox1.Lines)
+            messageTextBox.Text = message;
+            messageTextBox.Width = (int)width - 15;
+            messageTextBox.ReadOnly = true;
+            messageTextBox.AutoSize = false;
+            foreach (var unused in messageTextBox.Lines)
             {
                 if (unused is not null && !string.IsNullOrEmpty(unused.Trim())) continue;
-                if (richTextBox1.Lines.Length <= 0) continue;
-                var lines = richTextBox1.Lines.ToList();
+                if (messageTextBox.Lines.Length <= 0) continue;
+                var lines = messageTextBox.Lines.ToList();
                 lines.RemoveAt(lines.Count - 1);
-                richTextBox1.Lines = lines.ToArray();
+                messageTextBox.Lines = lines.ToArray();
             }
-            var height = (int)CreateGraphics().MeasureString(richTextBox1.Text, richTextBox1.Font, new SizeF(width, 99999)
+            var height = (int)CreateGraphics().MeasureString(messageTextBox.Text, messageTextBox.Font, new SizeF(width, 99999)
                                                              , StringFormat.GenericDefault).Height;
-            richTextBox1.Height = (int)(height * 1.2);
+            messageTextBox.Height = (int)(height * 1.2);
 
-            var fixedMsgHs = richTextBox1.Height + 38;
+            var fixedMsgHs = messageTextBox.Height + 38;
             var fixedImgHs = UserImage.Location.Y + UserImage.Height + 20;
             Height = fixedMsgHs <= fixedImgHs ? fixedImgHs : fixedMsgHs + 20;
-            var w = (int)CreateGraphics().MeasureString(richTextBox1.Text, richTextBox1.Font, new SizeF(width, 99999)
+            var w = (int)CreateGraphics().MeasureString(messageTextBox.Text, messageTextBox.Font, new SizeF(width, 99999)
                                                         , StringFormat.GenericDefault).Width + 20;
             var nameW = (int)CreateGraphics().MeasureString(author, Author.Font, new SizeF(9999, 99999)
                                                             , StringFormat.GenericDefault).Width + 20;
 
             if (w < width)
             {
-                richTextBox1.Width = w;
+                messageTextBox.Width = w;
             }
             if (nameW > w)
                 Width = nameW + 67;

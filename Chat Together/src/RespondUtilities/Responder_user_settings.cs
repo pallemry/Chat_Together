@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
+
+using Chat_Together.src.DB;
 
 using Form_Functions;
 
-namespace Chat_Together
+namespace Chat_Together.RespondUtilities
 {
     public partial class Responder
     {
@@ -38,7 +38,7 @@ namespace Chat_Together
             public string ChangePfp(IReadOnlyList<string> command)
             {
                 byte[]? pfp = null;
-                var dir = new DirectoryInfo(ControlsMisc.GetResourcesPath());
+                var dir = new DirectoryInfo(ControlsMisc.GetImageResourcesPath());
                 FileInfo[] files = dir.GetFiles(command[1] + ".*");
                 string f = null;
                 foreach (var file in files)
@@ -50,7 +50,7 @@ namespace Chat_Together
                 }
                 if (f != null)
                     File.Delete(f);
-                Parent.Cte.Users.ToList().First(user1 => user1.UserName == command[1]).ProfilePicture = pfp;
+                Enumerable.ToList<User>(Parent.Cte.Users).First(user1 => user1.UserName == command[1]).ProfilePicture = pfp;
                 Parent.Cte.SaveChanges();
                 return "Done|ExitCode=0";
             }
@@ -70,22 +70,18 @@ namespace Chat_Together
 
             public string VerifyAdminPrivileges(IReadOnlyList<string> command)
             {
-                if (_codeSent == int.Parse(command[1]))
-                {
-                    Parent.Cte.Users.First((user1 => Parent.Client.User != null && 
-                                                     user1.HasAdminPrivileges == false && user1.id == Parent.Client.User.id))
-                        .HasAdminPrivileges = true;
-                    Parent.Cte.SaveChanges();
-                    if (_codeTimer != null && _codeTimer.Enabled)
-                    {
-                        _codeTimer.Stop();
-                        _codeSent = null;
-                    }
+                if (_codeSent != int.Parse(command[1])) return Parent.DefaultResponse(command);
+                if (Parent.Client.User != null)
+                    Parent.Client.User.HasAdminPrivileges = true;
+                else
+                    throw new ArgumentNullException(nameof(Client.User));
+                Parent.Cte.SaveChanges();
+                if (_codeTimer is not { Enabled: true }) return "mbox$You're an admin now!";
+                _codeTimer.Stop();
+                _codeSent = null;
 
-                    return "mbox$You're an admin now!";
-                }
+                return "mbox$You're an admin now!";
 
-                return Parent.DefaultResponse(command);
             }
         }
     }

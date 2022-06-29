@@ -62,6 +62,7 @@ namespace Form_Functions
             this.UserPicutreBox.Size = new System.Drawing.Size(200, 200);
             this.UserPicutreBox.TabIndex = 1;
             this.UserPicutreBox.TabStop = false;
+            this.UserPicutreBox.Click += new System.EventHandler(this.UserPicutreBox_Click);
             // 
             // PasswordTitleLabel
             // 

@@ -7,23 +7,19 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Chat_Together.src.DB;
 
 using Form_Functions;
-using Form_Functions.src;
 
-namespace Chat_Together
+namespace Chat_Together.RespondUtilities
 {
     public partial class Responder
     {
-        public class Req
+        public class Req : SpecificResponder
         {
-            public Responder Parent { get; set; }
-            internal Req(Responder parent)
+            internal Req(Responder parent) : base(parent)
             {
-                Parent = parent;
             }
 
             public string UserSignIn(IReadOnlyList<string> command)
@@ -39,27 +35,40 @@ namespace Chat_Together
                         var logInSuccesful = false;
                         foreach (var client in Parent.Cte.Users)
                         {
-
                             //Checks to see if the user matches the name and password
                             if (client == null || !logInAttempt(client)) continue;
                             Parent.Client.User = client;
                             client.IsOnline = true;
+                            client.LastTimeLoggedIn = DateTime.Now;
                             logInSuccesful = true;
                             if (client.ProfilePicture == null) break;
                             using var memoryStream = new MemoryStream(client.ProfilePicture);
                             var image = Image.FromStream(memoryStream);
-                            using (var fileStream = File.Create($"{ControlsMisc.GetResourcesPath()}\\{client.UserName}.png"))
+                            using (var fileStream = File.Create($"{ControlsMisc.GetImageResourcesPath()}\\{client.UserName}.png"))
                             {
                                 image.Save(fileStream, ImageFormat.Png);
                             }
                         }
                         Parent.Cte.SaveChanges();
-                        if (logInSuccesful) return "usr-r$" + us[0] + ":" + us[1] + "$true$";
+
+                        if (logInSuccesful)
+                        {
+                            var user = Parent.Client.User.Message_Record;
+                            var pfp = Parent.Client.User.ProfilePicture;
+                            Parent.Client.User.Message_Record = null;
+                            Parent.Client.User.ProfilePicture = null;
+                            var clientAsJson = JsonSerializer.Serialize(Parent.Client.User);
+                            Parent.Client.User.Message_Record = user;
+                            Parent.Client.User.ProfilePicture = pfp;
+                            return "usr-r$" + clientAsJson + "$true$";
+                        }
                         return "usr-r$" + "NaN:NaN" + "$false$";
 
                     case "1" when Parent.Cte.Users.ToList().All(newAccountAttempt):
+                        var @in = DateTime.Now;
                         var tempUser = new User
-                        { Password = us[1], UserName = us[0], IsOnline = true, DateCreated = DateTime.Now };
+                        { Password = us[1], UserName = us[0], IsOnline = true, DateCreated = @in, LastTimeLoggedIn = @in,
+                          HasAdminPrivileges = false, TotalMessagesSent = 0, TotalTicks = 0, ProfilePicture = null};
                         Parent.Client.User = tempUser;
                         Parent.Cte.Users.Add(tempUser);
 
@@ -71,7 +80,11 @@ namespace Chat_Together
                         {
                             Debug.Assert(false);
                         }
-                        return "usr-r$" + us[0] + ":" + us[1] + "$true$";
+                        var msgs = Parent.Client.User.Message_Record;
+                        Parent.Client.User.Message_Record = null;
+                        var newClientAsJson = JsonSerializer.Serialize(Parent.Client.User);
+                        Parent.Client.User.Message_Record = msgs;
+                        return "usr-r$" + newClientAsJson + "$true$";
 
                     default:
                         return "usr-r$" + "NaN:NaN" + "$false$";
@@ -132,6 +145,18 @@ namespace Chat_Together
                 var msgFound = Parent.Cte.Message_Records.ToArray()[msgFoundIndex];
                 return msgFound;
 
+            }
+
+            public string UserData(IReadOnlyList<string> command)
+            {
+                var user = Parent.Client.User.Message_Record;
+                var pfp = Parent.Client.User.ProfilePicture;
+                Parent.Client.User.Message_Record = null;
+                Parent.Client.User.ProfilePicture = null;
+                var clientAsJson = JsonSerializer.Serialize(Parent.Client.User);
+                Parent.Client.User.Message_Record = user;
+                Parent.Client.User.ProfilePicture = pfp;
+                return "usr.data$" + clientAsJson + "$";
             }
         }
 

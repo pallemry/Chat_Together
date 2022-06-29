@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace Chat_Together
+namespace Form_Functions
 {
     partial class ChatMessage
     {
@@ -39,7 +39,7 @@ namespace Chat_Together
         private void InitializeComponent()
         {
             this.Author = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.messageTextBox = new System.Windows.Forms.RichTextBox();
             this.InformationButton = new System.Windows.Forms.PictureBox();
             this.UserImage = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.InformationButton)).BeginInit();
@@ -58,14 +58,14 @@ namespace Chat_Together
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.richTextBox1.Location = new System.Drawing.Point(67, 38);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(217, 23);
-            this.richTextBox1.TabIndex = 3;
-            this.richTextBox1.Text = "";
-            this.richTextBox1.MouseEnter += new System.EventHandler(this.ChatMessage_MouseEnter);
-            this.richTextBox1.MouseLeave += new System.EventHandler(this.ChatMessage_MouseLeave);
+            this.messageTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.messageTextBox.Location = new System.Drawing.Point(67, 38);
+            this.messageTextBox.Name = "messageTextBox";
+            this.messageTextBox.Size = new System.Drawing.Size(217, 23);
+            this.messageTextBox.TabIndex = 3;
+            this.messageTextBox.Text = "";
+            this.messageTextBox.MouseEnter += new System.EventHandler(this.ChatMessage_MouseEnter);
+            this.messageTextBox.MouseLeave += new System.EventHandler(this.ChatMessage_MouseLeave);
             // 
             // InformationButton
             // 
@@ -95,7 +95,7 @@ namespace Chat_Together
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Controls.Add(this.InformationButton);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.messageTextBox);
             this.Controls.Add(this.UserImage);
             this.Controls.Add(this.Author);
             this.Name = "ChatMessage";
@@ -114,7 +114,7 @@ namespace Chat_Together
 
         public System.Windows.Forms.Label Author;
         public System.Windows.Forms.PictureBox UserImage;
-        public System.Windows.Forms.RichTextBox richTextBox1;
+        public System.Windows.Forms.RichTextBox messageTextBox;
         private System.Windows.Forms.PictureBox InformationButton;
     }
 }

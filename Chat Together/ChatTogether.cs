@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -12,11 +9,11 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
 
+using Chat_Together.RespondUtilities;
 using Chat_Together.src.DB;
-
 using Form_Functions;
+using TestSocket;
 
 using Timer = System.Timers.Timer;
 
@@ -31,7 +28,7 @@ namespace Chat_Together
         private readonly ChatTogtherEntities1 _cte;
         private readonly Dictionary<string, TcpClient> _tcpClients;
         //private int? _codeSent;
-        private Responder Responder { get; set; }
+        private Responder Responder { get; set; } = null!;
 
         // Constructor
         public ChatTogether()
@@ -41,7 +38,7 @@ namespace Chat_Together
             // Takes care of the last ports, if they were not closed properly.
             File.WriteAllText("..\\Port.txt", "");
             _cte = new ();
-
+            
 
             if (!Directory.Exists(ControlsMisc.GetImageResourcesPath() + "\\def"))
             {
@@ -85,7 +82,7 @@ namespace Chat_Together
                 var c = l.LatestConnected; // set the last connected property to the most recent client connected
                 Responder = new Responder(_cte, c);
                 Responder.ClientTriesToDisconnect += OnCOnDisconnected;
-                // When a new client sends back a message.
+                // When a new client sends back a message
                 c.Received += (_, data) => {
                     Responder.Client = c;
                     var dataRec = Encoding.Default.GetString(data); // the data the client sent to the sever
@@ -123,7 +120,8 @@ namespace Chat_Together
                         _tcpClients.Add(c.ID, new TcpClient($"127.0.0.{int.Parse(dataRec)}",
                                                             int.Parse(dataRec)));
                     }
-                
+
+
                     //Send the response given by GetResponseBasedOnData(string, Client) back to the client
                     try
                     {
@@ -136,7 +134,7 @@ namespace Chat_Together
                             }
                             else
                             {
-                                MessageBox.Show($"Client: \nID:{c.ID}\nIPv4:{c.ep.Address} Port:{c.ep.Port} " +
+                                MessageBox.Show($"Client: \nID:{c.ID}\nIPv4:{c.Ep.Address} Port:{c.Ep.Port} " +
                                                 "not connected when it should have been");
                             }
                         }
@@ -152,12 +150,13 @@ namespace Chat_Together
                     {
                         Invoke((MethodInvoker)(() => { AddClientToListView(c); }));
                     }
-                
+
+
+
                     //Saves the message in the database.
                     Invoke((MethodInvoker)(() => {
                         if (c.User == null || !responseBasedOnData.Equals("Received")) return;
-                        record = new Message_Record { Message = dataRec, dateOccured = dateRec, UserID = c.User.id };
-
+                        record = new Message_Record { Message = dataRec, dateOccured = dateRec };
                         for (var i = 0; i < clientListView.Items.Count; i++)
                         {
                             if (!c.ID.Equals(clientListView.Items[i].SubItems[1].Text)) continue;
@@ -167,8 +166,10 @@ namespace Chat_Together
                             {
                                 MessageBox.Show(e.ToString());
                             }
-                            clientListView.Items[i].SubItems[2].Text = dataRec;
-                            clientListView.Items[i].SubItems[3].Text =
+
+                            var text = dataRec.StartsWith(UserTableLiterals.UserSentIndicator) ? dataRec.Substring(2) : dataRec;
+                            clientListView.Items[i].SubItems[2].Text = text;
+                            clientListView.Items[i].SubItems[3].Text =      
                                 dateRec.ToString(CultureInfo.DefaultThreadCurrentCulture);
 
                             try
@@ -199,7 +200,7 @@ namespace Chat_Together
                                     }
                                     else
                                     {
-                                        MessageBox.Show($"Client: \nID:{c.ID}\nIPv4:{c.ep.Address} Port:{c.ep.Port} " +
+                                        MessageBox.Show($"Client: \nID:{c.ID}\nIPv4:{c.Ep.Address} Port:{c.Ep.Port} " +
                                                         "not connected when it should have been");
                                     }
                                 }
@@ -213,64 +214,21 @@ namespace Chat_Together
                         }
                     }));
             };
-            
-            // When a client has disconnected from the main sever either by being terminated, closed or lost connection. Remove him from any list/view,
-            // close all connections and release all resources related with the client
-            void OnCOnDisconnected(Client sender)
-            {
-                Invoke((MethodInvoker) delegate {
-                    if (Handle == null)
-                        return;
-                    try
-                    {
-                        _tcpClients[c.ID].GetStream().Close();
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    _tcpClients.Remove(c.ID);
-                    for (var i = 0; i < clientListView.Items.Count; i++)
-                    {
-                        if (sender is { User: { } })
-                        {
-                            sender.User.IsOnline = false;
-                        }
-                        if (!c.ID.Equals(clientListView.Items[i].SubItems[1].Text)) continue;
-                        clientListView.Items.RemoveAt(i);
-                        break;
-                    }
-
-                    try
-                    {
-                        _cte.SaveChanges();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                });
-            }
-            c.Disconnected += OnCOnDisconnected; }; 
+                c.Disconnected += OnCOnDisconnected; };
             l.Start();
         }
 
         private void Install()
         {
             Directory.CreateDirectory($"{ControlsMisc.GetImageResourcesPath()}\\def");
-            File.WriteAllText(ControlsMisc.LogInInformationConfigPath, @"
-<?xml version=""1.0"" encoding=""utf-8""?>
+            File.WriteAllText(ControlsMisc.LogInInformationConfigPath, "" +
+@"<?xml version=""1.0"" encoding=""utf-8""?>
 <Data>
-    <SmtpGmail>
-        Your gmail goes in here
-    </SmtpGmail>
-    <SmtpPassword>
-        Your password goes in here
-    </SmtpPassword>
+    <SmtpGmail key = ""mail"">Your Smtp gmail address goes in here</SmtpGmail>
+    <SmtpPassword key = ""password"">Your Password goes in here</SmtpPassword>
 </Data>");
-            using (var m = new MemoryStream(_cte.Users.Find(23)!.ProfilePicture))
-                Image.FromStream(m).Save($"{ControlsMisc.GetImageResourcesPath()}\\def\\defaultUser.png");
+            using var m = new MemoryStream(_cte.Users.Find(23)!.ProfilePicture);
+            Image.FromStream(m).Save($"{ControlsMisc.GetImageResourcesPath()}\\def\\defaultUser.png");
         }
 
         /// <summary>
@@ -279,24 +237,31 @@ namespace Chat_Together
         /// <param name="c">The client to add to the main listView</param>
         private void AddClientToListView(Client c)
         {
-            var i = new ListViewItem { Text = c.ep.ToString() };
+            var i = new ListViewItem { Text = c.Ep.ToString() };
             i.SubItems.Add(c.ID);
             i.SubItems.Add("---");
             i.SubItems.Add("---");
-            i.SubItems.Add(c.ep.Port.ToString());
+            i.SubItems.Add(c.Ep.Port.ToString());
             i.SubItems.Add(_tcpClients[c.ID].Client.RemoteEndPoint.ToString());
             i.Tag = c;
             clientListView.Items.Add(i);
         }
 
-        // This method gets as an input the data/message recieved from the client and the client reference itself.
+        // This method gets as an input the data/message received from the client and the client reference itself.
         private string GetResponseBasedOnData(string data, Client c)
         {
             var serverCommand = data.Split('$');
             if (serverCommand.Length < 1) return c.TimesRec <= 0 ? "Paired Successfully" : "Received";
-            return Responder.GetResponseMethod(serverCommand)(serverCommand);
+            var responderMethodBasedOnCommand = Responder.GetResponseMethod(serverCommand, data);
+            var finalResponse = responderMethodBasedOnCommand.Invoke(serverCommand);
+            return finalResponse;
         }
 
+        /// <summary>
+        /// When a client has disconnected from the main sever either by being terminated, closed or lost connection. Remove him from any list/view,
+        /// close all connections and release all resources related with the client
+        /// </summary>
+        /// <param name="clientToRem">The client object to remove</param>
         private void OnCOnDisconnected(Client clientToRem)
         {
             Invoke((MethodInvoker)delegate

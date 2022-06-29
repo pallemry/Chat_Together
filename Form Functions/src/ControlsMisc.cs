@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
+using System.Xml;
+
 namespace Form_Functions
 {
     public delegate bool GetDef();
     public static class ControlsMisc
     {
         public static readonly Dictionary<TextBox, GetDef> IsEmpty = new ();
+        public static readonly string LogInInformationConfigPath = $"{GetAppDataPath()}\\LogInInformation.config";
 
         public static void InitializePanelResize(this Panel panel, Form owner, Control control, params Control[] controls)
         {
@@ -18,11 +19,38 @@ namespace Form_Functions
             a.Add(control);
             foreach (var c in a)
             {
-                c.Resize += (sender, args) => {
+                c.Resize += (_, _) => {
                     var previousPanelHeight = panel.Height;
                     panel.Height = c.Location.Y + c.Height;
                     owner.Height += panel.Height - previousPanelHeight;
                 };
+            }
+        }
+
+        public static XmlDocument LoadConfigDocument()
+        {
+            XmlDocument doc = null;
+            try
+            {
+                doc = new XmlDocument();
+                doc.Load(LogInInformationConfigPath);
+                return doc;
+            }
+            catch (System.IO.FileNotFoundException e)
+            {
+                throw new Exception("No configuration file found.", e);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static void ApplyMaxLength(int maxLength, params TextBoxBase[] controls)
+        {
+            foreach (var control in controls)
+            {
+                control.MaxLength = maxLength;
             }
         }
 
@@ -87,9 +115,9 @@ namespace Form_Functions
             cb.CheckedChanged += (_, _) => tb.UseSystemPasswordChar = !cb.Checked;
         }
 
-        private static string osUserNames = Environment.UserName;
-        public static string? GetSolutionPath() => $"C:\\Users\\{osUserNames}\\AppData\\Local\\Chat Together";
-        public static string? GetResourcesPath() => $"{GetSolutionPath()}\\resources\\UserImageProfiles";
+        private static string osUserName = Environment.UserName;
+        public static string GetAppDataPath() => $"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Chat Together";
+        public static string GetImageResourcesPath() => $"{GetAppDataPath()}\\resources\\UserImageProfiles";
 
     }
 }

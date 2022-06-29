@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 #nullable enable
 namespace Form_Functions
 {
     public partial class AccountSettings : Form
     {
-        public static readonly Image DefaultUserProfileImage = Image.FromFile(ControlsMisc.GetResourcesPath() + "\\def\\defaultUser.png");
+        public static readonly Image DefaultUserProfileImage = Image.FromFile(ControlsMisc.GetImageResourcesPath() + "\\def\\defaultUser.png");
 
         public string UserName
         {
@@ -128,7 +124,7 @@ namespace Form_Functions
             var bmp = new Bitmap(img.Width, img.Height);
             using var gp = new GraphicsPath();
 
-            gp.AddEllipse(0, 0, img.Width + 3, img.Height + 3);
+            gp.AddEllipse(0, 0, img.Width, img.Height);
             using var gr = Graphics.FromImage(bmp);
 
             gr.SetClip(gp);
@@ -150,12 +146,12 @@ namespace Form_Functions
                 {
                     string[] validExtensions = { ".jpg", ".png", ".jpeg" };
                     Uri imageUri;
-
+                    if (args.Inputs.Length == 1 && args.Inputs[0] == null) return;
                     if (!Uri.TryCreate(args.Inputs[0], UriKind.Absolute, out imageUri)) throw new Exception();
                     if (!validExtensions.Contains(Path.GetExtension(imageUri.AbsolutePath))) throw new Exception();
 
                     using var wc = new WebClient();
-                    var imagePath = ControlsMisc.GetResourcesPath() + "\\" + UserName +
+                    var imagePath = ControlsMisc.GetImageResourcesPath() + "\\" + UserName +
                                     Path.GetExtension(imageUri.AbsolutePath);
                     File.Create(imagePath).Close();
                     wc.DownloadFile(imageUri, imagePath);
@@ -169,8 +165,8 @@ namespace Form_Functions
                 }
                 catch (Exception ex)
                 {
-                    
-                    throw;
+                    MessageBox.Show( "URL given does not correspond to an image file or the image extension is not supported", "Invalid URL"
+                                    , MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             };
             Task.Run(() => Application.Run(imageURI));
@@ -185,7 +181,7 @@ namespace Form_Functions
                 op.Multiselect = false;
                 op.Filter = "*Image Files (*.png, *.jpg, *.bmp, *.gif, *.jpeg)|*.png;*.jpg;*.bmp;*.gif;*.jpeg";
                 if (op.ShowDialog() != DialogResult.OK) return;
-                var pfpFileName = ControlsMisc.GetResourcesPath() + "\\" + UserName +
+                var pfpFileName = ControlsMisc.GetImageResourcesPath() + "\\" + UserName +
                                    Path.GetExtension(op.FileName);
                 File.Copy(Path.GetFullPath(op.FileName), pfpFileName);
                 imageDir = Path.GetFullPath(op.FileName);
@@ -237,6 +233,11 @@ namespace Form_Functions
                                                   "\nIf you wish to proceed click on YES, ", "CONFIRMATION", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmDeletion != DialogResult.Yes) return;
             AccountDeleteAttempt(this, EventArgs.Empty);
+        }
+
+        private void UserPicutreBox_Click(object sender, EventArgs e)
+        {
+            ChangeImageByFileLbl_Click(sender, e);
         }
     }
 }

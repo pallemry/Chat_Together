@@ -1,7 +1,7 @@
 ﻿
-namespace Chat_Together
+namespace TestSocket
 {
-    partial class SendData
+    sealed partial class SendData
     {
         /// <summary>
         /// Required designer variable.
@@ -34,7 +34,7 @@ namespace Chat_Together
             this.sendButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
             this.userIcons = new System.Windows.Forms.ImageList(this.components);
-            this.textBox1 = new System.Windows.Forms.RichTextBox();
+            this.messageInputTextBox = new System.Windows.Forms.RichTextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeBgImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,6 +44,8 @@ namespace Chat_Together
             this.changeAdminPrivilegesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.chatLog = new Form_Functions.ChatLog();
+            this.adminToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.suspenseUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -80,20 +82,21 @@ namespace Chat_Together
         "w (3).png");
             this.userIcons.Images.SetKeyName(1, "Shopping_cart_icon.svg.ico");
             // 
-            // textBox1
+            // messageInputTextBox
             // 
-            this.textBox1.Font = new System.Drawing.Font("SimSun", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(12, 16);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(1590, 84);
-            this.textBox1.TabIndex = 6;
-            this.textBox1.Text = "";
-            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown_1);
+            this.messageInputTextBox.Font = new System.Drawing.Font("SimSun", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.messageInputTextBox.Location = new System.Drawing.Point(12, 16);
+            this.messageInputTextBox.Name = "messageInputTextBox";
+            this.messageInputTextBox.Size = new System.Drawing.Size(1590, 84);
+            this.messageInputTextBox.TabIndex = 6;
+            this.messageInputTextBox.Text = "";
+            this.messageInputTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown_1);
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.editToolStripMenuItem});
+            this.editToolStripMenuItem,
+            this.adminToolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1920, 24);
@@ -140,6 +143,7 @@ namespace Chat_Together
             this.accountStatsToolStripMenuItem.Name = "accountStatsToolStripMenuItem";
             this.accountStatsToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.accountStatsToolStripMenuItem.Text = "Account Stats";
+            this.accountStatsToolStripMenuItem.Click += new System.EventHandler(this.accountStatsToolStripMenuItem_Click);
             // 
             // changeAdminPrivilegesToolStripMenuItem
             // 
@@ -152,7 +156,7 @@ namespace Chat_Together
             // panel1
             // 
             this.panel1.Controls.Add(this.sendButton);
-            this.panel1.Controls.Add(this.textBox1);
+            this.panel1.Controls.Add(this.messageInputTextBox);
             this.panel1.Controls.Add(this.closeButton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 914);
@@ -176,6 +180,20 @@ namespace Chat_Together
             this.chatLog.TabIndex = 5;
             this.chatLog.Load += new System.EventHandler(this.chatLog1_Load);
             // 
+            // adminToolsToolStripMenuItem
+            // 
+            this.adminToolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.suspenseUserToolStripMenuItem});
+            this.adminToolsToolStripMenuItem.Name = "adminToolsToolStripMenuItem";
+            this.adminToolsToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
+            this.adminToolsToolStripMenuItem.Text = "Admin Tools";
+            // 
+            // suspenseUserToolStripMenuItem
+            // 
+            this.suspenseUserToolStripMenuItem.Name = "suspenseUserToolStripMenuItem";
+            this.suspenseUserToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.suspenseUserToolStripMenuItem.Text = "Suspense User";
+            // 
             // SendData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -184,6 +202,7 @@ namespace Chat_Together
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.chatLog);
             this.Controls.Add(this.menuStrip1);
+            this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "SendData";
             this.Text = "SendData";
@@ -203,7 +222,7 @@ namespace Chat_Together
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.ImageList userIcons;
         private Form_Functions.ChatLog chatLog;
-        private System.Windows.Forms.RichTextBox textBox1;
+        private System.Windows.Forms.RichTextBox messageInputTextBox;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changeBgImageToolStripMenuItem;
@@ -212,5 +231,7 @@ namespace Chat_Together
         private System.Windows.Forms.ToolStripMenuItem accountStatsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changeAdminPrivilegesToolStripMenuItem;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripMenuItem adminToolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem suspenseUserToolStripMenuItem;
     }
 }

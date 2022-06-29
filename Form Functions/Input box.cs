@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Form_Functions
@@ -16,7 +10,7 @@ namespace Form_Functions
     {
         
         public event InputBoxClosed ClosedINBox;
-        public TextBox[] TextBoxes { get; private set; }
+        public TextBox[] TextBoxes { get; }
         public Input_box(string MainTitle, params TextBoxInformation[]? textBoxes)
         {
             InitializeComponent();
@@ -68,8 +62,8 @@ namespace Form_Functions
     }
     public struct TextBoxInformation
     {
-        public string Title { get; set; }
-        public string PlaceHolderText { get; set; }
+        public string Title { get; }
+        public string PlaceHolderText { get; }
 
         public TextBoxInformation(string title, string placeHolderText)
         {

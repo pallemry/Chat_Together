@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Net;
@@ -9,50 +10,52 @@ namespace Chat_Together
     public class Listener
     {
         [NotMapped]
-        private Socket soc { get; set; }
-        public bool Listening { get; set; }
-        private int Port { get; set; }
+        private Socket Soc { get; set; }
+        public bool Listening { get; private set; }
+        private int Port { get; }
         public List<Client> ConnectedClients { get; }
-        public Client LatestConnected { get; private set; }
+        public Client LatestConnected { get; private set; } = null!;
+
+        public event Action<Socket>? SocketAccepted;
 
         public Listener(int port)
         {
             ConnectedClients = new List<Client>();
             Port = port;
-            soc = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Soc = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
         public void Start()
         {
             if (Listening) return;
-            soc.Bind(new IPEndPoint(0, Port));
-            soc.Listen(0);
-            soc.BeginAccept(CallBack, null);
+            Soc.Bind(new IPEndPoint(0, Port));
+            Soc.Listen(0);
+            Soc.BeginAccept(CallBack, null);
             Listening = true;
             
         }
+
+        // ReSharper disable once UnusedMember.Global
         public void Stop()
         {
             if (!Listening) return;
-            soc.Close();
-            soc.Dispose();
-            soc = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Soc.Close();
+            Soc.Dispose();
+            Soc = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
         private void CallBack(IAsyncResult a)
         {
             try {
-                var s = soc.EndAccept(a);
+                var s = Soc.EndAccept(a);
                 LatestConnected = new Client(s, this);
                 SocketAccepted?.Invoke(s);
                 //LatestConnected.Socket.Send(Encoding.Default.GetBytes($"Added to connected clients: {LatestConnected.ID}, {LatestConnected.ep}"));
-                soc.BeginAccept(CallBack, null);
+                Soc.BeginAccept(CallBack, null);
             } // Try Statement
             catch (Exception e) {
                 Console.WriteLine(e);
             }
         }
-
-        public event Action<Socket> SocketAccepted;
     }
 }

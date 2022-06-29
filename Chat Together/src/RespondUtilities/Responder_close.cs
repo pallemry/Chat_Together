@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Chat_Together
+namespace Chat_Together.RespondUtilities
 {
     public partial class Responder
     {

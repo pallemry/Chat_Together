@@ -1,38 +1,49 @@
 ﻿using System;
-using System.Drawing;
+using System.Diagnostics;
 using System.Timers;
 using System.Windows.Forms;
 
 using Timer = System.Timers.Timer;
-
+#nullable enable
 namespace TestSocket
 {
     public partial class LoadingWindow : Form
     {
-        public int MinimumProgressBarInterval { get; set; } = 1;
-        public int MaximumProgressBarInterval { get; set; } = 20;
+        public int MinimumProgressBarInterval { get; } = 1;
+        public int MaximumProgressBarInterval { get; } = 20;
+        private readonly Form? _parentForm;
+
         public LoadingWindow()
         {
+            _parentForm = null;
             InitializeComponent();
             BringToFront();
             TopMost = true;
         }
-        public LoadingWindow(Form parent)
+        public LoadingWindow(Form parentForm)
         {
-            Location = new Point(parent.Location.X / 2, parent.Location.Y / 2);
-            PointToScreen(new Point(parent.Location.X / 2, parent.Location.Y / 2));
+            _parentForm = parentForm;
             InitializeComponent();
+            CenterToScreen();
             BringToFront();
             TopMost = true;
         }
-#nullable enable
         private Timer? _t;
-#nullable disable
         private void LoadingWindow_Load(object sender, EventArgs e)
         {
-            _t = new System.Timers.Timer(new Random().Next(MinimumProgressBarInterval, MaximumProgressBarInterval));
+            _t = new Timer(new Random().Next(MinimumProgressBarInterval, MaximumProgressBarInterval));
             _t.Elapsed += EvaluateProgressbar;
             _t.Start();
+
+
+            Cursor = Cursors.WaitCursor;
+            if (_parentForm != null)
+            {
+                Invoke(delegate() {
+                    _parentForm.Cursor = Cursors.WaitCursor;
+                    Debug.WriteLine($"Loading window: parent form name: {_parentForm.Text}, cursor: {_parentForm.Cursor}");
+                });
+            }
         }
 
         private void EvaluateProgressbar(object sender , ElapsedEventArgs e)
@@ -53,7 +64,7 @@ namespace TestSocket
                 _t?.Stop();
                 return;
             }
-            _t = new System.Timers.Timer(new Random().Next(MinimumProgressBarInterval, MaximumProgressBarInterval));
+            _t = new Timer(new Random().Next(MinimumProgressBarInterval, MaximumProgressBarInterval));
             _t.Elapsed += EvaluateProgressbar;
             _t.Start();
         }
@@ -61,6 +72,7 @@ namespace TestSocket
         private void LoadingWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
             _t = null;
+            Invoke(() => _parentForm?.ResetCursor());
         }
     }
 }

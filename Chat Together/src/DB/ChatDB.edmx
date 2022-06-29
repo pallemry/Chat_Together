@@ -24,7 +24,10 @@
           <Property Name="HasAdminPrivileges" Type="bit" Nullable="false" />
           <Property Name="ProfilePicture" Type="image" />
           <Property Name="IsOnline" Type="bit" Nullable="false" />
-          <Property Name="DateCreated" Type="date" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="TotalMessagesSent" Type="bigint" Nullable="false" />
+          <Property Name="TotalTicks" Type="bigint" Nullable="false" />
+          <Property Name="LastTimeLoggedIn" Type="datetime" />
         </EntityType>
         <Association Name="UserMessages">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -71,7 +74,10 @@
           <Property Name="HasAdminPrivileges" Type="Boolean" Nullable="false" />
           <Property Name="ProfilePicture" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="IsOnline" Type="Boolean" Nullable="false" />
-          <Property Name="DateCreated" Type="DateTime" Precision="0" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="TotalMessagesSent" Type="Int64" Nullable="false" />
+          <Property Name="TotalTicks" Type="Int64" Nullable="false" />
+          <Property Name="LastTimeLoggedIn" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="UserMessages">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -112,6 +118,9 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="ChatTogtherModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="LastTimeLoggedIn" ColumnName="LastTimeLoggedIn" />
+                <ScalarProperty Name="TotalTicks" ColumnName="TotalTicks" />
+                <ScalarProperty Name="TotalMessagesSent" ColumnName="TotalMessagesSent" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
                 <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />

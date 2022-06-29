@@ -70,6 +70,7 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,6 +79,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountStats.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AccountStats.Designer.cs">
+      <DependentUpon>AccountStats.cs</DependentUpon>
+    </Compile>
     <Compile Include="AccountSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,6 +110,10 @@
     <Compile Include="Input box.Designer.cs">
       <DependentUpon>Input box.cs</DependentUpon>
     </Compile>
+    <Compile Include="src\Average.cs" />
+    <Compile Include="src\TimeSpanFormatProvider.cs" />
+    <Compile Include="src\UserJson.cs" />
+    <Compile Include="UserTableLiterals.cs" />
     <Compile Include="LogIn.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -128,6 +139,9 @@
     <Compile Include="TaskEx.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AccountStats.resx">
+      <DependentUpon>AccountStats.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AccountSettings.resx">
       <DependentUpon>AccountSettings.cs</DependentUpon>
     </EmbeddedResource>

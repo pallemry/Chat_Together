@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Sockets;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
@@ -16,28 +13,21 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Form_Functions;
-using Form_Functions.src;
 
-using TestSocket;
 using TestSocket.Properties;
 
 using static System.Text.Encoding;
 using Timer = System.Timers.Timer;
 // ReSharper disable LocalizableElement
+// ReSharper disable MemberCanBePrivate.Global
 #nullable enable
-namespace Chat_Together
+namespace TestSocket
 {
-    public enum Dependency
-    {
-        ServerDependent,
-        Independent
-    }
-    
-    public partial class SendData : Form
+    public sealed partial class SendData : Form
     {
         #region Static Variables
 
-        private static Dictionary<string, Image?> _profileImages = new();
+        private static readonly Dictionary<string, Image?> ProfileImages = new();
 
         #endregion
 
@@ -49,47 +39,43 @@ namespace Chat_Together
         private readonly TcpListener _tcpListener;
         private static int _ipHeader;
         private readonly int _port = 1;
-        public Guid? _id;
+        private Guid? _id;
 
         // User-Information-related variables
-        private List<string> _userNames = new(), _passwords = new ();
-        private volatile User? _currentUser;
+        private volatile UserJson? _currentUser;
         private Image? ProfileImage { get; set; }
         private bool? _isUserValid;
 
         // Configurations
-        public int _defaultMessageWidth = 1000;
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        public int DefaultMessageWidth { get; set; }= 1000;
 
         //Other back-end related variables that are used for validation, threading, timing, one-time uses, etc.
-        private volatile MessageInformationArgs? _currentMessageInformation = null;
-        private volatile bool _currentMessageHandled = false;
+        private volatile MessageInformationArgs? _currentMessageInformation;
+        private volatile bool _currentMessageHandled;
         private volatile Thread _loadingRunner;
         private volatile LoadingWindow? _loading;
         private Timer? _tmr = new(1000);
         private Thread? _t;
-        private Thread? _messageInformationThread = null;
-        private volatile LogIn? logIn;
+        private Thread? _messageInformationThread;
+        private volatile LogIn? _logIn;
         private volatile LogIn.LoggedInEventArgs? _logInArgs;
-        private int? codeRec;
+        private int? _codeRec;
         private bool _running;
         public static bool InstanceBeingCreated { get; private set; }
+        private AccountStats? _accountStats;
 
         #endregion
 
 
         #region Constructor
 
-        
-
         public SendData()
         {
             InstanceBeingCreated = true;
-            _loadingRunner = new Thread(Start);
-            _loadingRunner.Name = "Loading Runner";
-            _loadingRunner.TrySetApartmentState(ApartmentState.STA);
-            _loadingRunner.Start();
             InitializeComponent();
-            chatLog.MessageInformationClicked +=  async (o, args) => {
+
+            chatLog.MessageInformationClicked +=  async (o, _) => {
                 _currentMessageInformation = null;
                 _currentMessageHandled = false;
                 var messageObject = (ChatMessage)o;
@@ -118,8 +104,9 @@ namespace Chat_Together
                 _messageInformationThread.Join();
                 _messageInformationThread = null;
             };
+
             Enabled = false;
-            var r = new Random();
+            adminToolsToolStripMenuItem.Visible = false;
 
             var s = File.ReadAllText("..\\Port.txt", Default);
             do
@@ -131,6 +118,11 @@ namespace Chat_Together
             File.WriteAllText("..\\Port.txt", s);
             _tcpListener = new TcpListener(IPAddress.Parse($"127.0.0.{_ipHeader}"), _ipHeader);
             _s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            _loadingRunner = new Thread(Start) { Name = "Loading Runner" };
+            _loadingRunner.TrySetApartmentState(ApartmentState.STA);
+            _loadingRunner.Start();
+
             InstanceBeingCreated = false;
         }
 
@@ -142,24 +134,26 @@ namespace Chat_Together
 
         #endregion
 
+
         private void sendButton_Click(object sender, EventArgs e)
         {
-            chatLog.AddMessage(textBox1.Text, _currentUser?.Name,
+            chatLog.AddMessage(messageInputTextBox.Text, _currentUser?.UserName,
                                 ProfileImage ?? AccountSettings.DefaultUserProfileImage,
-                                _defaultMessageWidth);
+                                DefaultMessageWidth);
             if (!_s.Connected) return;
-            var msg = textBox1.Text;
+            
+            var msg = UserTableLiterals.UserSentIndicator + messageInputTextBox.Text;
             var num = _s.Send(Default.GetBytes(msg));
             if (num <= 0) { MessageBox.Show("Data could not be sent!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-            textBox1.Text = @"";
+            messageInputTextBox.Text = @"";
         }
-        
+
         private void SendData_Load(object sender, EventArgs e)
         {
             closeButton.BringToFront();
             sendButton.BringToFront();
-            textBox1.BringToFront();
-            textBox1.MaxLength = 350;
+            messageInputTextBox.BringToFront();
+            messageInputTextBox.MaxLength = 350;
             Text += Size;
             _running = true;
             _s.Connect("127.0.0.1", 9);
@@ -168,7 +162,7 @@ namespace Chat_Together
                 _tmr.Elapsed += (_, _) => {
                     Thread.Sleep(200);
                     if (!_s.Connected || !_running) return;
-                    var size = _s.Send(Default.GetBytes(_port.ToString()));
+                    _s.Send(Default.GetBytes(_port.ToString()));
                     _tmr?.Stop();
                     _tmr = null;
                 };
@@ -181,16 +175,15 @@ namespace Chat_Together
             }
             catch (Exception exception)
             {
-                throw new Exception(exception.Message + $"Failed to start side server ip add " +
+                throw new Exception(exception.Message + "Failed to start side server ip add " +
                                     $"{_tcpListener.LocalEndpoint} + Port: {_ipHeader}", exception);
             }
 
             menuStrip1.Enabled = false;
-            textBox1.Enabled = false;
+            messageInputTextBox.Enabled = false;
             sendButton.Enabled = false;
             
-            _t = new Thread(GetDataFromServer);
-            _t.Name = "Worker Thread";
+            _t = new Thread(GetDataFromServer) { Name = "Worker Thread" };
             _t.Start();
         }
 
@@ -201,7 +194,7 @@ namespace Chat_Together
             _ipHeader++;
              Invoke((MethodInvoker) delegate{ 
                 chatLog.AddMessage("Successfully connected with the main server", "Server",
-                                    Resources.download_removebg_preview, _defaultMessageWidth, true);
+                                    Resources.download_removebg_preview, DefaultMessageWidth, true);
                 Enabled = true;
                 Invoke((MethodInvoker)delegate {
                     _loading?.Close();
@@ -235,16 +228,15 @@ namespace Chat_Together
             }
         }
 
-        protected virtual void StartLogInProcess()
+        private void StartLogInProcess()
         {
-            
-            Task.Run(() => {
+            Task.Run(async () => {
                 Invoke((MethodInvoker) delegate { Enabled = true; });
                 while (_running)
                 {
-                    logIn = new LogIn();
-                    logIn.LoggedIn += (_, args) => _logInArgs = args;
-                    Application.Run(logIn);
+                    _logIn = new LogIn();
+                    _logIn.LoggedIn += (_, args) => _logInArgs = args;
+                    Application.Run(_logIn);
 
                     if (_logInArgs != null)
                     {
@@ -253,13 +245,15 @@ namespace Chat_Together
                         _s.Send(Default.GetBytes("req$usr-v$" + _logInArgs.UserName + ":" +
                                                  _logInArgs.Password + "$" + (_logInArgs.NewAccount ? "1" : "0")));
 
-                        while (_isUserValid == null) ;
-                        Thread.Sleep(50);
+                        await TaskEx.WaitWhile(() => _isUserValid == null);
+                        await Task.Delay(50);
+
                         if (_isUserValid == true)
                         {
                             _isUserValid = null;
-                            MessageBox.Show($"Hi {_currentUser?.Name}, We're glad to have you here!");
-                            Invoke((MethodInvoker) delegate { Enabled = true; });
+                            MessageBox.Show($@"Hi {_currentUser?.UserName}, We're glad to have you here!");
+                            Invoke((MethodInvoker) delegate {
+                                Enabled = true; });
 
                             break;
                         }
@@ -329,70 +323,71 @@ namespace Chat_Together
                     MessageBox.Show(res[1]);
                     break;
                 case "codeSent":
-                    if (codeRec != null) return;
-                    codeRec = int.Parse(res[1]);
-                    var xmlLogInDoc = ControlsMisc.LoadConfigDocument()["Data"];
+                    if (_codeRec != null) return;
+                    _codeRec = int.Parse(res[1]);
+                    var xmlLogInDoc = ControlsMisc.LoadConfigDocument();
+                    var mail = xmlLogInDoc.SelectSingleNode("//*[@key='mail']")?.InnerText;
+                    var password = xmlLogInDoc.SelectSingleNode("//*[@key='password']")?.InnerText;
                     var smtpClient = new SmtpClient("smtp.gmail.com")
                     {
                     Port = 587,
-                    Credentials = new NetworkCredential(xmlLogInDoc["SmtpGmail"].Value, xmlLogInDoc["SmtpPassword"]?.Value),
+                    Credentials = new NetworkCredential(mail, password),
                     EnableSsl = true,
                     };
-                    var input_code = new Input_box("Enter Code given in email",
+                    var inputCode = new Input_box("Enter Code given in email",
                                                    new TextBoxInformation("Enter Code sent", "Enter here"));
                     smtpClient.Send("t.mail.spam.t@gmail.com", "yishai.israel8@gmail.com", "Verification", "" +
-                                    $"User: {_currentUser?.Name}\nPassword: {_currentUser?.Password} is requesting admin privileges " +
-                                    $"\nVerification code: \n\n{codeRec}\n\nNOTE: This code will expire in 1 minute and won't be valid after that duration.");
-                    input_code.ClosedINBox += (_, args) => {
+                                    $"User: {_currentUser?.UserName}\nPassword: {_currentUser?.Password} is requesting admin privileges " +
+                                    $"\nVerification code: \n\n{_codeRec}\n\n" +
+                                    "NOTE: This code will expire in 1 minute and won't be valid after that duration.");
+                    inputCode.ClosedINBox += (_, args) => {
                         var codeString = args.Inputs[0];
 
-                        if (string.IsNullOrEmpty(codeString) || !int.TryParse(codeString, out var g))
+                        if (string.IsNullOrEmpty(codeString) || !int.TryParse(codeString, out var _))
                         {
-                            MessageBox.Show("Must enter number form 1000-9999");
+                            MessageBox.Show(@"Must enter number form 1000-9999");
                             return;
                         }
                         var code = int.Parse(codeString);
                         if (code is < 1000 or > 9999)
                         {
-                            MessageBox.Show("Must enter number form 1000-9999");
+                            MessageBox.Show(@"Must enter number form 1000-9999");
                             return;
                         }
-                        if (code != codeRec)
+                        if (code != _codeRec)
                         {
-                            MessageBox.Show("Wrong Code");
+                            MessageBox.Show(@"Wrong Code");
                             return;
                         }
 
-                        codeRec = null;
+                        _codeRec = null;
                         _s.Send(Default.GetBytes("veradmin$" + code));
                     };
-                    input_code.Show();
+                    inputCode.Show();
                     break;
                 case "cls":
                     EndOperation(CloseReason.ApplicationExitCall);
                     break;
                 case "usr.data":
-                    HandleUserData(res[1]);
+                    HandleUserData(res[1], true);
                     break;
                 case "avg" when res[1].Equals("total"):
                     Task.Run(() => {
                         var avg = JsonSerializer.Deserialize<Average>(res[2]);
-                        accountStats.ApplyAverage(avg);
+                        _accountStats?.ApplyAverage(avg);
                     });
                     break;
                 case "usr-r":
-                    var us = res[1].Split(':');
-
                     if (bool.Parse(res[2]))
                     {
                         menuStrip1.Enabled = true;
-                        textBox1.Enabled = true;
+                        messageInputTextBox.Enabled = true;
                         sendButton.Enabled = true;
+                        _currentUser = new UserJson(res[1]);
                         _isUserValid = true;
-                        _currentUser = new User(us[0], us[1]);
                         var dir = new DirectoryInfo(ControlsMisc.GetImageResourcesPath());
-                        FileInfo[] files = dir.GetFiles(_currentUser.Name + ".*");
-                        var image = (Image) null;
+                        FileInfo[] files = dir.GetFiles(_currentUser.UserName + ".*");
+                        Image image = null!;
                         foreach (var file in files)
                         {
                             var s = File.Open(file.FullName, FileMode.Open);
@@ -400,37 +395,52 @@ namespace Chat_Together
                             s.Dispose();
                             file.Delete();
                         }
-                        if (_profileImages.ContainsKey(_currentUser.Name)) _profileImages.Remove(_currentUser.Name);
-                        _profileImages.Add(_currentUser.Name, image);
+
+                        // If the image already exists in the ProfileImage list than delete it
+                        if (ProfilePictureExists(_currentUser.UserName)) 
+                            ProfileImages.Remove(_currentUser.UserName);
+
+                        ProfileImages.Add(_currentUser.UserName, image);
                         ProfileImage = image;
                     }
                     else
                         _isUserValid = false;
                     break;
                 case "unreadmsg":
-                    chatLog.AddMessage(res[2], res[1], _profileImages[res[1]] ?? AccountSettings.DefaultUserProfileImage, _defaultMessageWidth);
+                    chatLog.AddMessage(RemoveUserIndicator(res[2]), res[1], ProfileImages[res[1]] ?? AccountSettings.DefaultUserProfileImage, DefaultMessageWidth);
                     return;
 
             }
             if (bb.StartsWith("show"))
-                chatLog.AddMessage(bb, "System", Resources.download_removebg_preview, _defaultMessageWidth, true);
+                chatLog.AddMessage(bb, "System", Resources.download_removebg_preview, DefaultMessageWidth, true);
         }
-        AccountStats accountStats;
+
+        private static string RemoveUserIndicator(string msg) => 
+            msg.StartsWith(UserTableLiterals.UserSentIndicator) ? msg.Remove(0, UserTableLiterals.UserSentIndicator.Length) : msg;
+        private bool ProfilePictureExists(string userName) => ProfileImages.ContainsKey(userName);
+
         /// <summary>
         /// Handles the user data and displays the account stats window
         /// </summary>
         /// <param name="userJson"></param>
+        /// <param name="showAccountStats">whether to show the data in an <see cref="AccountStats"/> window</param>
         /// <exception cref="JsonException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        private void HandleUserData(string userJson)
+        private void HandleUserData(string userJson, bool showAccountStats)
         {
             var userJsonNode = JsonNode.Parse(userJson);
-            File.WriteAllText(ControlsMisc.GetAppDataPath() + "\\JsonTest.json", userJsonNode.ToJsonString(new JsonSerializerOptions{WriteIndented = true}));
-            accountStats = new AccountStats(userJsonNode,
-                                            _profileImages[_currentUser.Name] ??
-                                            AccountSettings.DefaultUserProfileImage);
-            accountStats.StartPosition = FormStartPosition.CenterScreen;
-            accountStats.Show();
+
+            if (userJsonNode == null) 
+                throw new JsonException(nameof(userJson));
+
+            File.WriteAllText(ControlsMisc.GetAppDataPath() + $"\\{userJsonNode[UserTableLiterals.Username]}.json", 
+                              userJsonNode.ToJsonString(new JsonSerializerOptions{WriteIndented = true}));
+            if (!showAccountStats) return;
+            _accountStats = new AccountStats(userJsonNode,
+                                             ProfileImages[_currentUser?.UserName ?? "def"] ??
+                                             AccountSettings.DefaultUserProfileImage)
+            { StartPosition = FormStartPosition.CenterScreen };
+            _accountStats.Show();
             _s.Send(Default.GetBytes("avg$total$"));
         }
 
@@ -457,11 +467,11 @@ namespace Chat_Together
             catch {
                 //ignored
             }
-            try { _rec?.Close(); _s?.Close(); _tcpListener?.Server.Close(); }
+            try { _rec?.Close(); _s.Close(); _tcpListener.Server.Close(); }
             catch { /* ignored */ }
             Invoke((MethodInvoker)delegate { 
-                if (logIn?.Running ?? false) 
-                    logIn.Close();
+                if (_logIn?.Running ?? false) 
+                    _logIn.Close();
                 Close();
             });
         }
@@ -487,27 +497,27 @@ namespace Chat_Together
             
             Task.Run(() => {
                 if (_currentUser == null) return;
-                var accountSettings = new AccountSettings(_currentUser.Name, _currentUser.Password, ProfileImage);
+                var accountSettings = new AccountSettings(_currentUser.UserName, _currentUser.Password, ProfileImage);
                 accountSettings.PasswordChanged += (_, userName, password) => {
                     _s.Send(Default.GetBytes("changepass$" + userName + ":" + password));
                     _currentUser.Password = password;
-                    _currentUser.Name = userName;
-                    MessageBox.Show("Password changed successfully!");
+                    MessageBox.Show(@"Password changed successfully!");
                     accountSettings.Password = password;
 
                 };
                 accountSettings.ProfilePictureChanged += (_, args) => { 
                     var commandBuffer = Default.GetBytes("changepfp$" + args.UserName + "$");
                     _s.Send(commandBuffer);
-                    _profileImages[args.UserName] = args.NewProfileImage;
+                    ProfileImages[args.UserName] = args.NewProfileImage;
                     ProfileImage = args.NewProfileImage ;
+                    MessageBox.Show(@"Profile Picture changed successfully!");
                 };
 
-                accountSettings.AccountDeleteAttempt += (o, args) => {
+                accountSettings.AccountDeleteAttempt += (_, _) => {
                     _s.Send(Default.GetBytes("del$"));
                     EndOperation(CloseReason.ApplicationExitCall);
                     accountSettings.Close();
-                };
+                };  
                 Application.Run(accountSettings);
 
                 

@@ -6,8 +6,9 @@ namespace Form_Functions
 {
     public partial class LogIn : Form
     {
-        public event LoggedInEventHandler LoggedIn;
+        public event LoggedInEventHandler? LoggedIn;
         public bool Running { get; private set; }
+
         public LogIn()
         {
             InitializeComponent();
@@ -16,9 +17,10 @@ namespace Form_Functions
             Running = true;
 
         }
+
         private void LogIn_Load(object sender, EventArgs e)
         {
-            
+            ControlsMisc.ApplyMaxLength(25, Password, PasswordSU, UserName, UserNameSU);
             label1.InitializeLinkLabel(FontStyle.Underline , label1.Font.Size, Color.RoyalBlue);
             label2.InitializeLinkLabel(FontStyle.Underline , label2.Font.Size, Color.RoyalBlue);
             Password.InitializePlaceHolder("Enter Password..",
@@ -54,7 +56,7 @@ namespace Form_Functions
         {
             if (Password.BackColor == Color.Gray)
             {
-                MessageBox.Show("Must fill password");
+                MessageBox.Show(@"Must fill password");
                 return;
             }
             CloseFormWithData(new LoggedInEventArgs(UserName.Text, Password.Text, Closer.ConfirmButton, false));
@@ -82,10 +84,10 @@ namespace Form_Functions
                 Password = password;
                 NewAccount = newAccount;
             }
-            public Closer Closer { get; private set; }
-            public string? UserName { get; private set; }
-            public string? Password { get; private set; }
-            public bool NewAccount{ get; private set; }
+            public Closer Closer { get; }
+            public string? UserName { get; }
+            public string? Password { get; }
+            public bool NewAccount{ get; }
         }
 
         public delegate void LoggedInEventHandler(LogIn owner, LoggedInEventArgs args);
@@ -106,7 +108,7 @@ namespace Form_Functions
         {
             if (PasswordSU.BackColor == Color.Gray)
             {
-                MessageBox.Show("Must fill password");
+                MessageBox.Show(@"Must fill password");
                 return;
             }
             CloseFormWithData(new LoggedInEventArgs(UserNameSU.Text, PasswordSU.Text, Closer.ConfirmButton, true));

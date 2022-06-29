@@ -6,10 +6,6 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 
-using Chat_Together;
-
-using Form_Functions.src;
-
 // ReSharper disable MemberCanBePrivate.Global
 namespace Form_Functions;
 
@@ -56,16 +52,14 @@ public partial class ChatLog : UserControl
     {
         var bmp = new Bitmap(img.Width, img.Height);
 
-        using (var gp = new GraphicsPath())
-        {
-            gp.AddEllipse(0, 0, img.Width + 3, img.Height + 3);
+        using var gp = new GraphicsPath();
 
-            using (var gr = Graphics.FromImage(bmp))
-            {
-                gr.SetClip(gp);
-                gr.DrawImage(img, Point.Empty);
-            }
-        }
+        gp.AddEllipse(0, 0, img.Width + 3, img.Height + 3);
+
+        using var gr = Graphics.FromImage(bmp);
+
+        gr.SetClip(gp);
+        gr.DrawImage(img, Point.Empty);
 
         return bmp;
     }
