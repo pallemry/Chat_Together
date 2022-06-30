@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
@@ -50,7 +51,7 @@ namespace Chat_Together
                 var s = Soc.EndAccept(a);
                 LatestConnected = new Client(s, this);
                 SocketAccepted?.Invoke(s);
-                //LatestConnected.Socket.Send(Encoding.Default.GetBytes($"Added to connected clients: {LatestConnected.ID}, {LatestConnected.ep}"));
+                Debug.WriteLine($"A client has been connected with the EP: {s.RemoteEndPoint}", "Server Listener");
                 Soc.BeginAccept(CallBack, null);
             } // Try Statement
             catch (Exception e) {

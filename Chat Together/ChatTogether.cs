@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -30,6 +32,7 @@ namespace Chat_Together
         //private int? _codeSent;
         private Responder Responder { get; set; } = null!;
 
+        private SmtpClient _smtpClient;
         // Constructor
         public ChatTogether()
         {
@@ -40,10 +43,13 @@ namespace Chat_Together
             _cte = new ();
             
 
-            if (!Directory.Exists(ControlsMisc.GetImageResourcesPath() + "\\def"))
+            if (!Directory.Exists(Globals.GetImageResourcesPath() + "\\def"))
             {
                 Install();
             }
+
+            // The smtp client responsible for sending messages
+            _smtpClient = Globals.GetSmtpClient();  
 
             var l = new Listener(9);
             _tcpClients = new Dictionary<string, TcpClient>();
@@ -218,17 +224,19 @@ namespace Chat_Together
             l.Start();
         }
 
+        
+
         private void Install()
         {
-            Directory.CreateDirectory($"{ControlsMisc.GetImageResourcesPath()}\\def");
-            File.WriteAllText(ControlsMisc.LogInInformationConfigPath, "" +
+            Directory.CreateDirectory($"{Globals.GetImageResourcesPath()}\\def");
+            File.WriteAllText(Globals.LogInInformationConfigPath, "" +
 @"<?xml version=""1.0"" encoding=""utf-8""?>
 <Data>
     <SmtpGmail key = ""mail"">Your Smtp gmail address goes in here</SmtpGmail>
     <SmtpPassword key = ""password"">Your Password goes in here</SmtpPassword>
 </Data>");
             using var m = new MemoryStream(_cte.Users.Find(23)!.ProfilePicture);
-            Image.FromStream(m).Save($"{ControlsMisc.GetImageResourcesPath()}\\def\\defaultUser.png");
+            Image.FromStream(m).Save($"{Globals.GetImageResourcesPath()}\\def\\defaultUser.png");
         }
 
         /// <summary>
@@ -295,10 +303,10 @@ namespace Chat_Together
             thread.TrySetApartmentState(ApartmentState.STA);
             thread.Start();
         }
-        private static void Start()
+        private void Start()
         {
             if (!SendData.InstanceBeingCreated)
-                Application.Run(new SendData());
+                Application.Run(new SendData(_smtpClient));
         }
 
         private void terminateClient_Click(object sender, EventArgs e)

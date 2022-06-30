@@ -1,17 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Windows.Forms;
 using System.Xml;
 
 namespace Form_Functions
 {
     public delegate bool GetDef();
-    public static class ControlsMisc
+    public static class Globals
     {
         public static readonly Dictionary<TextBox, GetDef> IsEmpty = new ();
         public static readonly string LogInInformationConfigPath = $"{GetAppDataPath()}\\LogInInformation.config";
+
+        public static string SmtpMailAddress { get; }
+        public static string SmtpMailPassword { get; }
+
+        static Globals()
+        {
+            var xmlLogInDoc = LoadConfigDocument();
+            SmtpMailAddress = xmlLogInDoc.SelectSingleNode("//*[@key='mail']")?.InnerText ?? throw new XmlException();
+            SmtpMailPassword = xmlLogInDoc.SelectSingleNode("//*[@key='password']")?.InnerText ?? throw new XmlException();
+           
+        }
+
+        public static SmtpClient GetSmtpClient() => new ("smtp.gmail.com")
+        {
+        Port = 587,
+        Credentials = new NetworkCredential(Globals.SmtpMailAddress, Globals.SmtpMailPassword),
+        EnableSsl = true,
+        };
+
+        public static bool IsFormOpen(string enterEmailFormName)
+        {
+            return Application.OpenForms.Cast<Form>().Any(openForm => openForm.Name == enterEmailFormName);
+        }
+
+        public static bool IsValidEmail(string email)
+        {
+            try
+            {
+                var address = new MailAddress(email);
+                return address.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         public static void InitializePanelResize(this Panel panel, Form owner, Control control, params Control[] controls)
         {
@@ -27,6 +66,33 @@ namespace Form_Functions
             }
         }
 
+        /// <summary>
+        /// Generates a random One Time Password with 4 digits
+        /// </summary>
+        /// <returns></returns>
+        public static int GenerateRandomOtp() => GenerateRandomOtp(1000, 9999);
+
+        public static int GenerateRandomOtp(int numOfDigits)
+        {
+            if (numOfDigits < 0) throw new ArgumentOutOfRangeException(nameof(numOfDigits));
+
+            var otp = "";
+            var random = new Random();
+            for (int i = 0; i < numOfDigits; i++)
+            {
+                otp += random.Next(11);
+            }
+
+            return int.Parse(otp);
+        }
+
+        public static int GenerateRandomOtp(int min, int max)
+        {
+            if (min <= max || min < 0 || max < 0) throw new ArgumentOutOfRangeException();
+            var random = new Random();
+            return random.Next(min, max);
+        }
+
         public static XmlDocument LoadConfigDocument()
         {
             XmlDocument doc = null;
@@ -36,7 +102,7 @@ namespace Form_Functions
                 doc.Load(LogInInformationConfigPath);
                 return doc;
             }
-            catch (System.IO.FileNotFoundException e)
+            catch (FileNotFoundException e)
             {
                 throw new Exception("No configuration file found.", e);
             }
@@ -51,6 +117,16 @@ namespace Form_Functions
             foreach (var control in controls)
             {
                 control.MaxLength = maxLength;
+            }
+        }
+
+        public static void InitializePlaceHolders(string phText, Color defaultForeColor,
+                                                 Color defaultBackColor, Color defaultPhForeColor,
+                                                 Color defaultPhBackColor, params TextBox[] textBoxes)
+        {
+            foreach (var textBox in textBoxes)
+            {
+                textBox.InitializePlaceHolder(phText, defaultForeColor, defaultBackColor, defaultPhForeColor, defaultPhBackColor);
             }
         }
 
@@ -83,6 +159,16 @@ namespace Form_Functions
                 placeHolding = true;
             };
         }
+
+        public static void InitializeLinkLabels(FontStyle linkVisualStyle, float linkTextSize,
+                                               Color linkForeColor, Color linkBackColor, params Label[] labels)
+        {
+            foreach (var label in labels)
+            {
+                label.InitializeLinkLabel(linkVisualStyle, linkTextSize, linkForeColor, linkBackColor);
+            }
+        }
+
         public static void InitializeLinkLabel(this Label target, FontStyle linkVisualStyle, float linkTextSize) =>
             InitializeLinkLabel(target, linkVisualStyle, linkTextSize, target.ForeColor, target.BackColor);
         public static void InitializeLinkLabel(this Label target, float linkTextSize,
@@ -118,6 +204,5 @@ namespace Form_Functions
         private static string osUserName = Environment.UserName;
         public static string GetAppDataPath() => $"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Chat Together";
         public static string GetImageResourcesPath() => $"{GetAppDataPath()}\\resources\\UserImageProfiles";
-
     }
 }

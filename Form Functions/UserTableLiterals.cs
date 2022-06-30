@@ -12,5 +12,6 @@
         public const string TotalNumMessagesSent = "TotalMessagesSent";
         public const string TotalAmountOfTicksOnline = "TotalTicks";
         public const string UserSentIndicator = "usrMadeMessage:";
+        public const string EmailAddress = "EmailAddress";
     }
 }

@@ -44,7 +44,7 @@ namespace Chat_Together.RespondUtilities
                             if (client.ProfilePicture == null) break;
                             using var memoryStream = new MemoryStream(client.ProfilePicture);
                             var image = Image.FromStream(memoryStream);
-                            using (var fileStream = File.Create($"{ControlsMisc.GetImageResourcesPath()}\\{client.UserName}.png"))
+                            using (var fileStream = File.Create($"{Globals.GetImageResourcesPath()}\\{client.UserName}.png"))
                             {
                                 image.Save(fileStream, ImageFormat.Png);
                             }

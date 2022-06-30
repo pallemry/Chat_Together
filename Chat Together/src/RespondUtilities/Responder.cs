@@ -129,6 +129,9 @@ namespace Chat_Together.RespondUtilities
                 case "reqadmin":
                     return UserSettings.RequestAdminPrivileges;
 
+                case "changemail":
+                    return UserSettings.ChangeEmailAddress;
+
                 case "veradmin":
                     return UserSettings.VerifyAdminPrivileges;
             }

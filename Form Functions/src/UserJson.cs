@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Nodes;
 // ReSharper disable ArrangeAccessorOwnerBody
-
+#nullable enable
 namespace Form_Functions
 {
     public class UserJson
@@ -36,8 +36,8 @@ namespace Form_Functions
         {
             get
             {
-                var userJsonNode = UserAsJsonDocument[UserTableLiterals.DateOfRegistration] ??
-                                   throw new ArgumentNullException(nameof(UserAsJsonDocument));
+                var userJsonNode = UserAsJsonDocument[UserTableLiterals.DateOfRegistration];
+                if (userJsonNode == null) return null;
                 if (userJsonNode.ToString().ToLower().Equals("null")) return null;
                 return DateTime.Parse(userJsonNode.ToString());
             }
@@ -80,6 +80,21 @@ namespace Form_Functions
                 var userJsonNode = UserAsJsonDocument[UserTableLiterals.HasAdminPrivileges] ??
                                    throw new ArgumentNullException(nameof(UserAsJsonDocument));
                 return bool.Parse(userJsonNode.ToString().ToLower());
+            }
+        }
+
+        public string? EmailAddress
+        {
+            get
+            {
+                var userJsonNode = UserAsJsonDocument[UserTableLiterals.EmailAddress];
+                if (userJsonNode == null) return null;
+                var emailAddress = userJsonNode.ToString();
+                return emailAddress.ToLower().Equals("null") ? null : emailAddress;
+            }
+            set
+            {
+                UserAsJsonDocument[UserTableLiterals.EmailAddress] = value;
             }
         }
 

@@ -45,6 +45,7 @@ namespace TestSocket
         private volatile UserJson? _currentUser;
         private Image? ProfileImage { get; set; }
         private bool? _isUserValid;
+        public SmtpClient SmtpClient { get; set; }
 
         // Configurations
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
@@ -70,8 +71,9 @@ namespace TestSocket
 
         #region Constructor
 
-        public SendData()
+        public SendData(SmtpClient smtpClient)
         {
+            SmtpClient = smtpClient;
             InstanceBeingCreated = true;
             InitializeComponent();
 
@@ -294,6 +296,8 @@ namespace TestSocket
                 }
             }
 
+            
+
             switch (res[0])
             {
                 case "latest.msg.id":
@@ -325,18 +329,9 @@ namespace TestSocket
                 case "codeSent":
                     if (_codeRec != null) return;
                     _codeRec = int.Parse(res[1]);
-                    var xmlLogInDoc = ControlsMisc.LoadConfigDocument();
-                    var mail = xmlLogInDoc.SelectSingleNode("//*[@key='mail']")?.InnerText;
-                    var password = xmlLogInDoc.SelectSingleNode("//*[@key='password']")?.InnerText;
-                    var smtpClient = new SmtpClient("smtp.gmail.com")
-                    {
-                    Port = 587,
-                    Credentials = new NetworkCredential(mail, password),
-                    EnableSsl = true,
-                    };
-                    var inputCode = new Input_box("Enter Code given in email",
-                                                   new TextBoxInformation("Enter Code sent", "Enter here"));
-                    smtpClient.Send("t.mail.spam.t@gmail.com", "yishai.israel8@gmail.com", "Verification", "" +
+                    var inputCode = new InputBox("Enter Code given in email",
+                                                  new TextBoxInformation("Enter Code sent", "Enter here"));
+                    SmtpClient.Send("t.mail.spam.t@gmail.com", "yishai.israel8@gmail.com", "Verification", "" +
                                     $"User: {_currentUser?.UserName}\nPassword: {_currentUser?.Password} is requesting admin privileges " +
                                     $"\nVerification code: \n\n{_codeRec}\n\n" +
                                     "NOTE: This code will expire in 1 minute and won't be valid after that duration.");
@@ -385,7 +380,7 @@ namespace TestSocket
                         sendButton.Enabled = true;
                         _currentUser = new UserJson(res[1]);
                         _isUserValid = true;
-                        var dir = new DirectoryInfo(ControlsMisc.GetImageResourcesPath());
+                        var dir = new DirectoryInfo(Globals.GetImageResourcesPath());
                         FileInfo[] files = dir.GetFiles(_currentUser.UserName + ".*");
                         Image image = null!;
                         foreach (var file in files)
@@ -433,10 +428,10 @@ namespace TestSocket
             if (userJsonNode == null) 
                 throw new JsonException(nameof(userJson));
 
-            File.WriteAllText(ControlsMisc.GetAppDataPath() + $"\\{userJsonNode[UserTableLiterals.Username]}.json", 
+            File.WriteAllText(Globals.GetAppDataPath() + $"\\{userJsonNode[UserTableLiterals.Username]}.json", 
                               userJsonNode.ToJsonString(new JsonSerializerOptions{WriteIndented = true}));
             if (!showAccountStats) return;
-            _accountStats = new AccountStats(userJsonNode,
+            _accountStats = new AccountStats(userJsonNode, SmtpClient,
                                              ProfileImages[_currentUser?.UserName ?? "def"] ??
                                              AccountSettings.DefaultUserProfileImage)
             { StartPosition = FormStartPosition.CenterScreen };
@@ -497,7 +492,7 @@ namespace TestSocket
             
             Task.Run(() => {
                 if (_currentUser == null) return;
-                var accountSettings = new AccountSettings(_currentUser.UserName, _currentUser.Password, ProfileImage);
+                var accountSettings = new AccountSettings(_currentUser, SmtpClient, ProfileImage);
                 accountSettings.PasswordChanged += (_, userName, password) => {
                     _s.Send(Default.GetBytes("changepass$" + userName + ":" + password));
                     _currentUser.Password = password;
@@ -517,10 +512,15 @@ namespace TestSocket
                     _s.Send(Default.GetBytes("del$"));
                     EndOperation(CloseReason.ApplicationExitCall);
                     accountSettings.Close();
-                };  
-                Application.Run(accountSettings);
+                };
 
-                
+                accountSettings.EmailChanged += (_, args) => {
+                    _currentUser.EmailAddress = args.NewEmailAddress;
+                    var commandBuffer = Default.GetBytes("changemail$" + args.NewEmailAddress + "$");
+                    _s.Send(commandBuffer);
+                };
+
+                Application.Run(accountSettings);
 
             });
         }

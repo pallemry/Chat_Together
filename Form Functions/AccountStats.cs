@@ -3,6 +3,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Net.Mail;
 using System.Text.Json.Nodes;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -13,7 +14,7 @@ namespace Form_Functions
     public partial class AccountStats
     {
         public JsonNode UserAsJsonNode { get; }
-        public static readonly Image DefaultUserProfileImage = Image.FromFile(ControlsMisc.GetImageResourcesPath() + "\\def\\defaultUser.png");
+        public static readonly Image DefaultUserProfileImage = Image.FromFile(Globals.GetImageResourcesPath() + "\\def\\defaultUser.png");
 
         public bool HasAdminPrivileges
         {
@@ -58,7 +59,7 @@ namespace Form_Functions
         public Image? Pfp { get; }
 
 
-        public AccountStats(JsonNode userAsJsonNode, Image pfp = null!)
+        public AccountStats(JsonNode userAsJsonNode, SmtpClient smtpClient, Image pfp = null!)
         {
             UserAsJsonNode = userAsJsonNode;
             InitializeComponent();

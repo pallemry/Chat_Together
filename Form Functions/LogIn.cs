@@ -20,7 +20,7 @@ namespace Form_Functions
 
         private void LogIn_Load(object sender, EventArgs e)
         {
-            ControlsMisc.ApplyMaxLength(25, Password, PasswordSU, UserName, UserNameSU);
+            Globals.ApplyMaxLength(25, Password, PasswordSU, UserName, UserNameSU);
             label1.InitializeLinkLabel(FontStyle.Underline , label1.Font.Size, Color.RoyalBlue);
             label2.InitializeLinkLabel(FontStyle.Underline , label2.Font.Size, Color.RoyalBlue);
             Password.InitializePlaceHolder("Enter Password..",
@@ -43,7 +43,7 @@ namespace Form_Functions
                                            UserNameSU.BackColor,
                                            Color.Gray,
                                            UserNameSU.BackColor);
-            ControlsMisc.LinkPasswordWithCheckBox(PasswordSU, checkBox1);
+            Globals.LinkPasswordWithCheckBox(PasswordSU, checkBox1);
         }
 
         private void LogIn_FormClosed(object sender, FormClosedEventArgs e)

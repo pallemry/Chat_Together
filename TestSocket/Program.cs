@@ -17,7 +17,7 @@ namespace TestSocket
             var t = new Thread(Start);
             t.TrySetApartmentState(ApartmentState.STA);
             //t.Start();
-            Application.Run(new SendData());
+            Application.Run(new SendData(null));
         }
 
         private static void Start()

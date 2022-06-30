@@ -28,6 +28,7 @@
           <Property Name="TotalMessagesSent" Type="bigint" Nullable="false" />
           <Property Name="TotalTicks" Type="bigint" Nullable="false" />
           <Property Name="LastTimeLoggedIn" Type="datetime" />
+          <Property Name="EmailAddress" Type="nvarchar(max)" />
         </EntityType>
         <Association Name="UserMessages">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -78,6 +79,7 @@
           <Property Name="TotalMessagesSent" Type="Int64" Nullable="false" />
           <Property Name="TotalTicks" Type="Int64" Nullable="false" />
           <Property Name="LastTimeLoggedIn" Type="DateTime" Precision="3" />
+          <Property Name="EmailAddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="UserMessages">
           <End Role="User" Type="Self.User" Multiplicity="0..1" />
@@ -118,6 +120,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="ChatTogtherModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
                 <ScalarProperty Name="LastTimeLoggedIn" ColumnName="LastTimeLoggedIn" />
                 <ScalarProperty Name="TotalTicks" ColumnName="TotalTicks" />
                 <ScalarProperty Name="TotalMessagesSent" ColumnName="TotalMessagesSent" />

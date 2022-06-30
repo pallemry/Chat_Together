@@ -40,6 +40,9 @@ namespace Form_Functions
             this.label1 = new System.Windows.Forms.Label();
             this.DeleteProfilePictureLbl = new System.Windows.Forms.Label();
             this.DeleteAccountLbl = new System.Windows.Forms.Label();
+            this.EmailAddressTitle = new System.Windows.Forms.Label();
+            this.EmailAddressLabel = new System.Windows.Forms.Label();
+            this.EditEmailAddressLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.UserPicutreBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -159,11 +162,45 @@ namespace Form_Functions
             this.DeleteAccountLbl.Text = "Delete Account";
             this.DeleteAccountLbl.Click += new System.EventHandler(this.DeleteAccountLbl_Click);
             // 
+            // EmailAddressTitle
+            // 
+            this.EmailAddressTitle.AutoSize = true;
+            this.EmailAddressTitle.Font = new System.Drawing.Font("Inter SemiBold", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EmailAddressTitle.Location = new System.Drawing.Point(12, 305);
+            this.EmailAddressTitle.Name = "EmailAddressTitle";
+            this.EmailAddressTitle.Size = new System.Drawing.Size(176, 26);
+            this.EmailAddressTitle.TabIndex = 11;
+            this.EmailAddressTitle.Text = "Recovery Email";
+            // 
+            // EmailAddressLabel
+            // 
+            this.EmailAddressLabel.AutoSize = true;
+            this.EmailAddressLabel.Font = new System.Drawing.Font("Inter SemiBold", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EmailAddressLabel.Location = new System.Drawing.Point(13, 331);
+            this.EmailAddressLabel.Name = "EmailAddressLabel";
+            this.EmailAddressLabel.Size = new System.Drawing.Size(45, 23);
+            this.EmailAddressLabel.TabIndex = 12;
+            this.EmailAddressLabel.Text = "test";
+            // 
+            // EditEmailAddressLabel
+            // 
+            this.EditEmailAddressLabel.AutoSize = true;
+            this.EditEmailAddressLabel.Font = new System.Drawing.Font("Gadugi", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EditEmailAddressLabel.Location = new System.Drawing.Point(13, 354);
+            this.EditEmailAddressLabel.Name = "EditEmailAddressLabel";
+            this.EditEmailAddressLabel.Size = new System.Drawing.Size(34, 19);
+            this.EditEmailAddressLabel.TabIndex = 13;
+            this.EditEmailAddressLabel.Text = "test";
+            this.EditEmailAddressLabel.Click += new System.EventHandler(this.EditEmailAddressLabel_Click);
+            // 
             // AccountSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(605, 450);
+            this.Controls.Add(this.EditEmailAddressLabel);
+            this.Controls.Add(this.EmailAddressLabel);
+            this.Controls.Add(this.EmailAddressTitle);
             this.Controls.Add(this.DeleteAccountLbl);
             this.Controls.Add(this.DeleteProfilePictureLbl);
             this.Controls.Add(this.label1);
@@ -196,5 +233,8 @@ namespace Form_Functions
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label DeleteProfilePictureLbl;
         private System.Windows.Forms.Label DeleteAccountLbl;
+        private System.Windows.Forms.Label EmailAddressTitle;
+        private System.Windows.Forms.Label EmailAddressLabel;
+        private System.Windows.Forms.Label EditEmailAddressLabel;
     }
 }

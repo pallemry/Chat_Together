@@ -1,7 +1,7 @@
 ﻿
 namespace Form_Functions
 {
-    partial class Input_box
+    partial class InputBox
     {
         /// <summary>
         /// Required designer variable.
@@ -48,7 +48,7 @@ namespace Form_Functions
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(252, 48);
             this.Controls.Add(this.ConfirmButton);
-            this.Name = "Input_box";
+            this.Name = "InputBox";
             this.Text = "Input_box";
             this.ResumeLayout(false);
 
