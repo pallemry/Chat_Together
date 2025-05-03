@@ -4,6 +4,7 @@
     {
         /// <summary>
         /// The parent of the specific responder, containing information related to various operations
+//if you found it, wtf are you doing with ur life
         /// </summary>
         protected Responder Parent { get; }
 
